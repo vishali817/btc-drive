@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-background text-black font-sans antialiased overflow-hidden;
+        /* Animated Gradient Background Hint */
+        background: linear-gradient(135deg, #E9F4FF 0%, #D0E6FA 100%);
+    }
+}
+
+@layer utilities {
+    .glass {
+        @apply bg-surface/70 backdrop-blur-lg border border-white/50 shadow-glass;
+    }
+
+    .glass-hover {
+        @apply hover:bg-white/80 transition-all duration-300;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-default::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scrollbar-default::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-default::-webkit-scrollbar-thumb {
+        @apply bg-primary/20 rounded-full hover:bg-primary/40;
+    }
+}
+
+/* 3D Depth Utilities */
+.depth-xs {
+    box-shadow: 0 4px 6px -1px rgba(25, 91, 172, 0.1), 0 2px 4px -1px rgba(25, 91, 172, 0.06);
+}
+
+.depth-sm {
+    box-shadow: 0 10px 15px -3px rgba(25, 91, 172, 0.1), 0 4px 6px -2px rgba(25, 91, 172, 0.05);
+}
+
+.depth-md {
+    box-shadow: 0 20px 25px -5px rgba(25, 91, 172, 0.1), 0 10px 10px -5px rgba(25, 91, 172, 0.04);
+}
+
+.depth-lg {
+    box-shadow: 0 25px 50px -12px rgba(25, 91, 172, 0.25);
+}
