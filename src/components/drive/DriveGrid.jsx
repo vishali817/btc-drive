@@ -7,10 +7,34 @@ import { useNavigate } from 'react-router-dom';
 import FilePreviewModal from '../modals/FilePreviewModal';
 import UploadModal from '../modals/UploadModal';
 
-const DriveGrid = ({ items, viewMode }) => {
+const DriveGrid = ({ items, viewMode, searchQuery }) => {
     const navigate = useNavigate();
     const [previewFile, setPreviewFile] = useState(null);
     const [isUploadOpen, setIsUploadOpen] = useState(false);
+
+    // Highlight Helper
+    const getHighlightedName = (name) => {
+        if (!searchQuery || typeof name !== 'string') return name;
+        const parts = name.split(new RegExp(`(${searchQuery})`, 'gi'));
+        return (
+            <>
+                {parts.map((part, i) =>
+                    part.toLowerCase() === searchQuery.toLowerCase() ?
+                        <span key={i} className="bg-yellow-200 text-gray-900 rounded-[2px] px-0.5">{part}</span> : part
+                )}
+            </>
+        );
+    };
+
+    // Process items to include highlighted names
+    // We clone the item to avoid mutation, replacing name with JSX if needed
+    // However, if Tiles rely on 'name' being string for props/meta, this might cause shallow issues.
+    // React renders Objects/Arrays? No. But it renders Components/Elements.
+    // We trust Tiles simply render {item.name}.
+    const processedItems = items.map(item => ({
+        ...item,
+        name: getHighlightedName(item.name)
+    }));
 
     const handleItemClick = (item) => {
         if (item.type === 'folder') {
@@ -27,9 +51,11 @@ const DriveGrid = ({ items, viewMode }) => {
         return (
             <>
                 <div className="flex flex-col gap-2">
-                    {items.map(item => (
+                    {processedItems.map(item => (
                         <div
-                            key={item.id || item.name}
+                            key={item.id || item.name} // item.name is now object if highlighted? keys handle objects? no keys must be string.
+                            // If name is highlighted JSX, using it as key is bad. Use ID.
+                            // We use item.id mostly.
                             onClick={() => handleItemClick(item)}
                             className="flex items-center gap-4 p-4 bg-white/40 rounded-xl hover:bg-white/80 transition-colors border border-transparent hover:border-gray-200 cursor-pointer group"
                         >
@@ -75,7 +101,7 @@ const DriveGrid = ({ items, viewMode }) => {
                 layout
                 className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
-                {items.map((item, index) => {
+                {processedItems.map((item, index) => {
                     const key = item.id || index;
 
                     if (item.type === 'folder') {

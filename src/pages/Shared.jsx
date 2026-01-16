@@ -83,7 +83,7 @@ const Shared = () => {
                                     </div>
                                     <h3 className="font-bold text-gray-700">{user}</h3>
                                 </div>
-                                <DriveGrid items={items} viewMode="grid" />
+                                <DriveGrid items={items} viewMode="grid" searchQuery={searchQuery} />
                             </div>
                         ))}
                     </div>
@@ -98,7 +98,7 @@ const Shared = () => {
             ) : (
                 // Standard Grid Filters
                 displayItems.length > 0 ? (
-                    <DriveGrid items={displayItems} viewMode="grid" />
+                    <DriveGrid items={displayItems} viewMode="grid" searchQuery={searchQuery} />
                 ) : (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">

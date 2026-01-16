@@ -4,7 +4,7 @@
 
 @layer base {
     body {
-        @apply bg-background text-black font-sans antialiased overflow-hidden;
+        @apply bg-background text-black font-sans antialiased;
         /* Animated Gradient Background Hint */
         background: linear-gradient(135deg, #E9F4FF 0%, #D0E6FA 100%);
     }

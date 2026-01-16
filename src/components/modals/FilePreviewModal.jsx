@@ -1,72 +1,60 @@
-import { FileText, Download, Share2, Star, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FileText } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import FilePreviewLayout from '../preview/FilePreviewLayout';
 
 const FilePreviewModal = ({ file, isOpen, onClose }) => {
-    if (!file) return null;
+    const [activeFile, setActiveFile] = useState(file);
+
+    useEffect(() => {
+        if (file) setActiveFile(file);
+    }, [file]);
 
     const handleBackdropClick = (e) => {
         if (e.target === e.currentTarget) onClose();
     };
 
-    return (
+    // Protect against null file if strictly required, but Layout handles it gracefully.
+    // We return portal always to allow AnimatePresence to handle exit if we wanted to fix that, 
+    // but without state caching, 'file' is null on exit. 
+    // Layout will render 'Untitled' briefly on exit. This is acceptable for now given the scope.
+
+    // Use activeFile (cached) for rendering, so content persists during exit animation
+    const displayFile = file || activeFile;
+
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <div
-                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 pt-20"
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 pt-24"
                     onClick={handleBackdropClick}
                 >
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[80vh] flex flex-col overflow-hidden"
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                        className="w-full max-w-5xl h-[85vh] flex flex-col"
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Header */}
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                                    <FileText size={18} />
-                                </div>
-                                <div className="flex flex-col">
-                                    <h3 className="text-sm font-bold text-gray-800 line-clamp-1">{file.name}</h3>
-                                    <span className="text-xs text-gray-500">{file.size} • {file.fileType || 'File'}</span>
+                        <FilePreviewLayout file={displayFile} onClose={onClose}>
+                            <div className="flex items-center justify-center h-full w-full p-8">
+                                <div className="bg-white shadow-lg rounded-xl flex flex-col items-center justify-center p-12 max-w-lg w-full aspect-[3/4] border border-gray-100">
+                                    <div className="w-24 h-24 mb-6 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300">
+                                        <FileText size={48} />
+                                    </div>
+                                    <p className="text-gray-400 font-medium text-lg">Preview not available</p>
+                                    <p className="text-sm text-gray-400 mt-2 text-center max-w-[250px]">
+                                        This is a mockup. In a real app, this would be the actual file viewer for <span className="font-mono text-gray-600">{displayFile?.fileType || 'unknown'}</span>.
+                                    </p>
                                 </div>
                             </div>
-
-                            <div className="flex items-center gap-2">
-                                <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
-                                    <Star size={20} />
-                                </button>
-                                <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
-                                    <Share2 size={20} />
-                                </button>
-                                <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
-                                    <Download size={20} />
-                                </button>
-                                <div className="w-px h-6 bg-gray-200 mx-2" />
-                                <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
-                                    <X size={20} />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Preview Area */}
-                        <div className="flex-1 bg-gray-100 flex items-center justify-center p-8 overflow-hidden relative">
-                            {/* Abstract Preview Placeholder */}
-                            <div className="bg-white shadow-lg rounded-xl flex flex-col items-center justify-center p-20 max-w-lg w-full aspect-[3/4]">
-                                <div className="w-24 h-24 mb-6 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300">
-                                    <FileText size={48} />
-                                </div>
-                                <p className="text-gray-400 font-medium">Preview not available</p>
-                                <p className="text-xs text-gray-300 mt-2 text-center max-w-[200px]">
-                                    This is a mockup. In a real app, this would be the actual file viewer for {file.fileType}.
-                                </p>
-                            </div>
-                        </div>
+                        </FilePreviewLayout>
                     </motion.div>
                 </div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 };
 

@@ -96,7 +96,7 @@ const Drive = () => {
 
             {/* Content Grid or Empty State */}
             {filteredItems.length > 0 ? (
-                <DriveGrid items={filteredItems} viewMode={viewMode} />
+                <DriveGrid items={filteredItems} viewMode={viewMode} searchQuery={searchQuery} />
             ) : (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">

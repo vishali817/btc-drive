@@ -26,20 +26,18 @@ const SettingsDrawer = ({ isOpen, onClose }) => {
             case 'account':
                 return (
                     <div className="space-y-4">
-                        <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold">
-                                JD
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-800">John Doe</h3>
-                                <p className="text-sm text-gray-500">john.doe@example.com</p>
-                            </div>
-                        </div>
-                        <div className="pt-4 space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase">Plan</label>
+                        <div className="pt-2 space-y-2">
+                            <label className="text-xs font-bold text-gray-500 uppercase">Current Plan</label>
                             <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex justify-between items-center">
                                 <span className="font-medium text-gray-700">Pro Plan</span>
                                 <button className="text-xs font-bold text-primary">Manage</button>
+                            </div>
+                        </div>
+                        <div className="pt-2 space-y-2">
+                            <label className="text-xs font-bold text-gray-500 uppercase">Billing Cycle</label>
+                            <div className="flex items-center justify-between text-sm text-gray-700">
+                                <span>Next payment due</span>
+                                <span className="font-medium">Feb 16, 2026</span>
                             </div>
                         </div>
                     </div>

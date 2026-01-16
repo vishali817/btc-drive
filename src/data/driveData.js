@@ -1,6 +1,6 @@
 export const driveData = {
     "app": {
-        "name": "Cloud Drive",
+        "name": "BTC Drive",
         "accountType": "Personal Account"
     },
     "layout": {

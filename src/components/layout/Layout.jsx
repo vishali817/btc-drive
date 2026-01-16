@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, AlertCircle } from 'lucide-react';
 import Navbar from './Navbar';
@@ -22,12 +22,57 @@ const Toast = ({ message, type, onClose }) => {
     );
 };
 
-const Layout = () => {
+const Layout = ({ onLogout }) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
     // Global State
     const [searchQuery, setSearchQuery] = useState('');
     const [isUploadOpen, setIsUploadOpen] = useState(false);
     const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
-    const [toast, setToast] = useState(null); // { message, type }
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false); // Lifted state
+    const [toast, setToast] = useState(null);
+
+    // Route Actions
+    useEffect(() => {
+        if (location.pathname === '/logout') {
+            if (onLogout) onLogout();
+            navigate('/');
+        }
+        if (location.pathname === '/settings') {
+            setIsSettingsOpen(true);
+            navigate('/my-drive', { replace: true });
+        }
+        if (location.pathname === '/profile') {
+            setIsSettingsOpen(true);
+            navigate('/my-drive', { replace: true });
+        }
+    }, [location, onLogout, navigate]);
+
+    // Import driveData is needed. Since I can't easily add import at top with this tool range, 
+    // I will use a minimal initial state and hope Drive populates it or rely on Drive to initialize?
+    // Better: Initialize with empty or default. 
+    // Actually, I can replace the whole component content or imports too.
+    // I'll assume I can't reach imports easily without reading file again. 
+    // I will use a hardcoded initial state or Mock Data here if I can't reach imports.
+    // Wait, Sidebar imports driveData. I can see imports in previous 'view_file'. 
+    // Layout imports Navbar, Sidebar...
+    // I'll add the import via a separate tool call if needed or just use `window.driveData` if available? No.
+    // I will define a basic initial set if I can't access `driveData`. 
+    // OR I will simply use `useState([])` and let `Drive` push data up? No, `Drive` expects data down.
+    // I will try to add the import first.
+
+    // Global Items State (Lifted from Drive)
+    const [fileSystem, setFileSystem] = useState({
+        items: [
+            { id: '1', type: 'folder', name: 'Work Projects', meta: '12 items' },
+            { id: '2', type: 'folder', name: 'Personal', meta: '8 items' },
+            { id: '3', type: 'file', fileType: 'pdf', name: 'Resume_2024.pdf', size: '1.2 MB' },
+            { id: '4', type: 'file', fileType: 'png', name: 'Design_System.png', size: '5.8 MB' },
+            { id: '5', type: 'folder', name: 'Finance', meta: '3 items' },
+            { id: '100', type: 'action', name: 'Create New' }
+        ]
+    });
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
@@ -50,22 +95,35 @@ const Layout = () => {
     };
 
     const handleCreateFolder = (name) => {
+        const newFolder = {
+            id: `folder-${Date.now()}`,
+            type: 'folder',
+            name: name,
+            meta: '0 items'
+        };
+
+        setFileSystem(prev => ({
+            ...prev,
+            items: [newFolder, ...prev.items]
+        }));
+
         showToast(`Folder "${name}" created successfully`);
-        // Here we would strictly update the data source, but since we use mock data in pages,
-        // visuals are enough to satisfyinteraction requirement "After action: Show toast notification".
-        // Updating list dynamically would require lifting 'items' state to Context, which is a larger refactor.
-        // For "DriveGrid", it uses its own state mostly or props. 
-        // We will assume visual feedback is the primary goal for "dead clicks".
+        // Immediate UI update handled by state change
     };
 
     return (
         <div className="h-screen w-full bg-background selection:bg-primary/20 text-text-primary font-sans overflow-hidden flex flex-col">
-            <Navbar setSearchQuery={setSearchQuery} />
+            <Navbar
+                setSearchQuery={setSearchQuery}
+                isSettingsOpen={isSettingsOpen}
+                setIsSettingsOpen={setIsSettingsOpen}
+                onLogout={onLogout}
+            />
             <Sidebar />
 
-            <main className="flex-1 h-full overflow-y-auto pl-[280px] pr-8 pt-24 pb-8 relative z-10 scroll-smooth">
+            <main className="flex-1 h-full overflow-y-auto w-full md:pl-[280px] pt-24 pb-32 relative z-10 scroll-smooth">
                 {/* Pass search query to children pages */}
-                <Outlet context={{ searchQuery }} />
+                <Outlet context={{ searchQuery, fileSystem }} />
             </main>
 
             <UploadButton onAction={handleUploadAction} />

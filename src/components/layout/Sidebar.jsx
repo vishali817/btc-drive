@@ -1,94 +1,80 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Folder, Users, Clock, Star, Trash2, Cloud } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Home, Share2, Clock, Star, Trash2, User, MessageCircle, Cloud } from 'lucide-react';
 import { driveData } from '../../data/driveData';
 import UpgradeModal from '../modals/UpgradeModal';
-
-const iconMap = {
-    folder: Folder,
-    users: Users,
-    clock: Clock,
-    star: Star,
-    trash: Trash2
-};
+import Dock from '../animations/Dock';
+import { useState } from 'react';
 
 const Sidebar = () => {
-    const location = useLocation();
     const navigate = useNavigate();
+    const location = useLocation();
     const { sidebar } = driveData.layout;
     const { sections } = sidebar;
 
     // Upgrade Modal State
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
-    const navSection = sections.find(s => s.title === "Navigation");
     const storageSection = sections.find(s => s.title === "Storage");
+
+    const dockItems = [
+        { icon: <Home size={24} className="text-white" />, label: "My Drive", onClick: () => navigate('/my-drive') },
+        { icon: <Share2 size={24} className="text-white" />, label: "Shared", onClick: () => navigate('/shared') },
+        { icon: <Clock size={24} className="text-white" />, label: "Recent", onClick: () => navigate('/recent') },
+        { icon: <Star size={24} className="text-white" />, label: "Starred", onClick: () => navigate('/starred') },
+        { icon: <Trash2 size={24} className="text-white" />, label: "Trash", onClick: () => navigate('/trash') },
+        { icon: <MessageCircle size={24} className="text-white" />, label: "Help", onClick: () => navigate('/help') },
+    ];
+
+    const navItems = [
+        { id: 'my-drive', label: 'My Drive', icon: Home, path: '/my-drive' },
+        { id: 'shared', label: 'Shared with me', icon: Share2, path: '/shared' },
+        { id: 'recent', label: 'Recent', icon: Clock, path: '/recent' },
+        { id: 'starred', label: 'Starred', icon: Star, path: '/starred' },
+        { id: 'trash', label: 'Trash', icon: Trash2, path: '/trash' },
+        { id: 'help', label: 'Help', icon: MessageCircle, path: '/help' },
+    ];
+
+    const isActive = (path) => location.pathname === path || (path === '/my-drive' && location.pathname.startsWith('/folder'));
 
     return (
         <>
-            <aside className="fixed left-4 top-24 bottom-4 w-[260px] flex flex-col z-40">
-                {/* Glass Panel */}
-                <div className="flex-1 flex flex-col justify-between p-4 rounded-3xl bg-surface/80 backdrop-blur-xl border border-white/40 shadow-card hover:shadow-floating transition-shadow duration-500">
+            {/* Desktop Vertical Sidebar */}
+            <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[260px] flex-col pt-24 pb-8 z-40 bg-[#195BAC] text-white overflow-y-auto border-r border-white/10 shadow-xl">
+                <div className="flex flex-col gap-2 px-4">
+                    {navItems.map((item) => {
+                        const active = isActive(item.path);
+                        return (
+                            <button
+                                key={item.id}
+                                onClick={() => navigate(item.path)}
+                                className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-sm font-medium
+                                    ${active
+                                        ? 'bg-white/20 text-white shadow-lg shadow-black/5 font-bold'
+                                        : 'hover:bg-white/10 text-blue-50'
+                                    }
+                                `}
+                            >
+                                <item.icon
+                                    size={20}
+                                    className={`${active ? 'text-white' : 'text-blue-200 group-hover:text-white'} transition-colors`}
+                                />
+                                <span>{item.label}</span>
+                            </button>
+                        );
+                    })}
+                </div>
 
-                    {/* Navigation */}
-                    <div className="flex flex-col gap-2">
-                        <h3 className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{navSection?.title}</h3>
-                        {navSection?.items.map((item) => {
-                            const Icon = iconMap[item.icon] || Folder;
-                            const isActive = location.pathname === item.path || (item.path === '/my-drive' && location.pathname === '/');
-
-                            return (
-                                <div
-                                    key={item.id}
-                                    onClick={() => navigate(item.path)}
-                                    className={`
-                                        flex items-center gap-3 px-4 py-3 rounded-2xl cursor-pointer transition-all duration-300 group
-                                        ${isActive
-                                            ? 'bg-primary/10 text-primary font-bold shadow-inner-light'
-                                            : 'hover:bg-white/50 text-text-secondary hover:text-text-primary'
-                                        }
-                                    `}
-                                >
-                                    <Icon size={20} className={`transition-colors ${isActive ? 'fill-current/20' : 'group-hover:scale-110'}`} />
-                                    <span className="">{item.label}</span>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Storage */}
-                    {storageSection && (
-                        <div className="flex flex-col gap-4 p-4 rounded-2xl bg-white/40 border border-white/50">
-                            <div className="flex items-center gap-2 text-text-primary font-semibold">
-                                <Cloud size={18} className="text-primary" />
-                                <span>{storageSection.title}</span>
-                            </div>
-
-                            <div className="flex flex-col gap-1">
-                                <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
-                                        style={{ width: `${storageSection.usage.percentage}%` }}
-                                    />
-                                </div>
-                                <div className="flex justify-between text-xs text-gray-500 font-medium">
-                                    <span>{storageSection.usage.used} used</span>
-                                    <span>{storageSection.usage.total}</span>
-                                </div>
-                            </div>
-
-                            {storageSection.action && (
-                                <button
-                                    onClick={() => setIsUpgradeOpen(true)}
-                                    className="w-full py-2 rounded-xl border border-primary text-primary text-sm font-bold hover:bg-primary hover:text-white transition-all duration-300"
-                                >
-                                    {storageSection.action.label}
-                                </button>
-                            )}
-                        </div>
-                    )}
+                <div className="mt-auto px-6 py-4">
+                    <p className="text-[10px] text-blue-200 text-center opacity-60">
+                        &copy; 2026 BTC Drive.
+                    </p>
                 </div>
             </aside>
+
+            {/* Mobile Dock Navigation - Hide on Desktop */}
+            <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+                <Dock items={dockItems} />
+            </div>
 
             {/* Upgrade Modal */}
             <UpgradeModal isOpen={isUpgradeOpen} onClose={() => setIsUpgradeOpen(false)} />

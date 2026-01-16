@@ -5,12 +5,26 @@ const UpgradeModal = ({ isOpen, onClose }) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Upgrade Your Plan" maxWidth="max-w-2xl">
             <div className="flex flex-col gap-6">
-                <div className="text-center mb-4">
+                <div className="text-center mb-6">
                     <div className="w-16 h-16 mx-auto bg-gradient-to-tr from-primary to-purple-500 rounded-2xl flex items-center justify-center text-white shadow-lg mb-4">
                         <Zap size={32} fill="currentColor" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Unlock Pro Features</h2>
-                    <p className="text-gray-500 mt-2">Get more storage and advanced security.</p>
+                    <h2 className="text-2xl font-bold text-gray-900">Storage & Plans</h2>
+
+                    {/* Storage Usage Bar */}
+                    <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100 max-w-sm mx-auto">
+                        <div className="flex justify-between text-sm font-semibold text-gray-700 mb-2">
+                            <span>Storage Usage</span>
+                            <span>65%</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden mb-2">
+                            <div className="h-full bg-primary rounded-full transition-all duration-1000 ease-out" style={{ width: '65%' }}></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500">
+                            <span>6.5 GB used</span>
+                            <span>10 GB total</span>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Plans Grid */}
