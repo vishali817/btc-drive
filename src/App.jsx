@@ -8,10 +8,11 @@ import Starred from './pages/Starred';
 import Trash from './pages/Trash';
 import LandingPage from './pages/LandingPage';
 import Help from './pages/Help';
+import Login from './pages/Login';
 
 function ProtectedRoute({ children, isAuthenticated }) {
     if (!isAuthenticated) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/" replace />; // Redirect to Landing Page if not auth
     }
     return children;
 }
@@ -19,15 +20,14 @@ function ProtectedRoute({ children, isAuthenticated }) {
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const storedAuth = localStorage.getItem('btc_drive_auth');
-        if (storedAuth === 'true') {
-            setIsAuthenticated(true);
-        }
-    }, []);
+    // REMOVED: Auto-authentication on load as per requirements
+    // useEffect(() => { ... }, []);
 
     const handleLogin = () => {
         setIsAuthenticated(true);
+        // We can still set localStorage if we want persistence during session, 
+        // but requirements say "Do NOT auto-authenticate on page load".
+        // Keeping it strictly state-based for this session effectively.
         localStorage.setItem('btc_drive_auth', 'true');
     };
 
@@ -39,8 +39,9 @@ function App() {
     return (
         <Router>
             <Routes>
-                {/* Public Route */}
-                <Route path="/" element={<LandingPage onLogin={handleLogin} />} />
+                {/* Public Routes - No Auto Redirects */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
                 {/* Protected Routes */}
                 <Route element={

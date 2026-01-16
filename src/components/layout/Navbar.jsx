@@ -91,7 +91,9 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
 
                 {/* Brand - Left */}
                 <div className="pointer-events-auto flex items-center gap-3 w-[260px]">
-                    <img src={btcLogo} alt="BTC Drive" className="h-[34px] w-auto" />
+                    <div className="bg-white rounded-2xl p-2 shadow-sm flex items-center justify-center">
+                        <img src={btcLogo} alt="BTC Drive" className="h-5 w-auto" />
+                    </div>
                     <div className="flex flex-col">
                         <span className="text-xl font-bold tracking-tight text-white leading-none">BTC <span className="text-blue-200">Drive</span></span>
                         <span className="text-xs font-semibold text-blue-100 tracking-wider uppercase">{driveData.app.accountType}</span>

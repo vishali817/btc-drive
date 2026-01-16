@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextType from '../components/animations/TextType';
 import ScrollFloat from '../components/animations/ScrollFloat';
@@ -6,25 +6,15 @@ import GlareHover from '../components/animations/GlareHover';
 import { Cloud, Share2, Shield, Folder, Activity, Lock } from 'lucide-react';
 import btcLogo from '../assets/logo/btc-logo.png';
 
-const LandingPage = ({ onLogin }) => {
+const LandingPage = () => {
     const navigate = useNavigate();
-    const [error, setError] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isLoginOpen, setIsLoginOpen] = useState(false);
-
-    const handleLogin = (e) => {
-        e.preventDefault();
-        if (email.trim() && password.trim()) {
-            onLogin();
-            navigate('/my-drive');
-        } else {
-            setError('Fields cannot be empty');
-        }
-    };
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleLoginClick = () => {
+        navigate('/login');
     };
 
     const features = [
@@ -44,47 +34,22 @@ const LandingPage = ({ onLogin }) => {
                     className="flex items-center gap-3 cursor-pointer group"
                     onClick={scrollToTop}
                 >
-                    <img
-                        src={btcLogo}
-                        alt="BTC Drive Logo"
-                        className="h-10 w-auto transition-transform duration-200 ease-in-out group-hover:scale-105"
-                    />
+                    <div className="bg-white rounded-2xl p-2 shadow-sm flex items-center justify-center transition-transform duration-200 ease-in-out group-hover:scale-105">
+                        <img
+                            src={btcLogo}
+                            alt="BTC Drive Logo"
+                            className="h-7 w-auto"
+                        />
+                    </div>
                     <span className="text-xl font-bold text-[#195BAC]">BTC Drive</span>
                 </div>
 
-                {!isLoginOpen ? (
-                    <button
-                        onClick={() => setIsLoginOpen(true)}
-                        className="px-8 py-3 bg-[#195BAC] text-white rounded-full font-bold hover:bg-[#144a8f] transition-all transform hover:scale-105 shadow-xl shadow-blue-200"
-                    >
-                        Login
-                    </button>
-                ) : (
-                    <form onSubmit={handleLogin} className="flex flex-col gap-3 bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/50 animate-in fade-in slide-in-from-top-4 w-72">
-                        <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-bold text-[#195BAC] text-lg">Welcome Back</h3>
-                            <button type="button" onClick={() => setIsLoginOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors">&times;</button>
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Email or Username"
-                            className="w-full p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none focus:border-[#195BAC] focus:ring-2 focus:ring-blue-100 transition-all shadow-inner"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            className="w-full p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none focus:border-[#195BAC] focus:ring-2 focus:ring-blue-100 transition-all shadow-inner"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        {error && <span className="text-red-500 text-xs font-bold ml-1">{error}</span>}
-                        <button type="submit" className="w-full bg-[#195BAC] text-white py-3 rounded-xl font-bold text-sm hover:bg-[#144a8f] shadow-lg shadow-blue-200 active:scale-95 transition-all mt-2">
-                            Access Drive
-                        </button>
-                    </form>
-                )}
+                <button
+                    onClick={handleLoginClick}
+                    className="px-8 py-3 bg-[#195BAC] text-white rounded-full font-bold hover:bg-[#144a8f] transition-all transform hover:scale-105 shadow-xl shadow-blue-200"
+                >
+                    Login
+                </button>
             </header>
 
             {/* Hero Section */}
@@ -113,7 +78,7 @@ const LandingPage = ({ onLogin }) => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 mb-24 relative z-10">
-                    <button onClick={() => setIsLoginOpen(true)} className="px-8 py-4 bg-[#195BAC] text-white rounded-2xl font-bold text-lg hover:bg-[#144a8f] transition-all transform hover:translate-y-[-4px] shadow-xl shadow-blue-300">
+                    <button onClick={handleLoginClick} className="px-8 py-4 bg-[#195BAC] text-white rounded-2xl font-bold text-lg hover:bg-[#144a8f] transition-all transform hover:translate-y-[-4px] shadow-xl shadow-blue-300">
                         Get Started Free
                     </button>
                     <button

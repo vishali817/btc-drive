@@ -6,7 +6,7 @@ const LogoutModal = ({ isOpen, onClose, onLogout }) => {
         <Modal isOpen={isOpen} onClose={onClose} title="Log Out" maxWidth="max-w-sm">
             <div className="flex flex-col gap-4">
                 <p className="text-gray-600">
-                    Are you sure you want to log out? You will be redirected to the landing page.
+                    Are you sure you want to log out?
                 </p>
                 <div className="flex justify-end gap-3 mt-4">
                     <button
