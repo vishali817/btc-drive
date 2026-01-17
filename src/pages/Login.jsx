@@ -34,7 +34,7 @@ const Login = ({ onLogin }) => {
                     <div className="bg-white p-3 rounded-2xl shadow-sm mb-4">
                         <img src={btcLogo} alt="BTC Drive" className="h-8 w-auto" />
                     </div>
-                    <h2 className="text-2xl font-bold text-[#195BAC]">Sign in to BTC Drive</h2>
+                    <h2 className="text-2xl font-bold text-[#0B1F3B]">Sign in to BTC Drive</h2>
                     <p className="text-gray-500 text-sm mt-2">Secure access to your files</p>
                 </div>
 
@@ -46,14 +46,14 @@ const Login = ({ onLogin }) => {
                             <label className="text-sm font-semibold text-gray-700 ml-1">Email Address</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Mail size={18} className="text-gray-400 group-focus-within:text-[#195BAC] transition-colors" />
+                                    <Mail size={18} className="text-gray-400 group-focus-within:text-[#0B1F3B] transition-colors" />
                                 </div>
                                 <input
                                     type="email"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:bg-white focus:border-[#195BAC] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:bg-white focus:border-[#0B1F3B] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
                                     placeholder="name@company.com"
                                 />
                             </div>
@@ -64,14 +64,14 @@ const Login = ({ onLogin }) => {
                             <label className="text-sm font-semibold text-gray-700 ml-1">Password</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock size={18} className="text-gray-400 group-focus-within:text-[#195BAC] transition-colors" />
+                                    <Lock size={18} className="text-gray-400 group-focus-within:text-[#0B1F3B] transition-colors" />
                                 </div>
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:bg-white focus:border-[#195BAC] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
+                                    className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:bg-white focus:border-[#0B1F3B] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
                                     placeholder="Enter your password"
                                 />
                                 <button
@@ -88,7 +88,7 @@ const Login = ({ onLogin }) => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-[#195BAC] hover:bg-[#144a8f] text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group mt-2"
+                            className="w-full bg-[#0B1F3B] hover:bg-[#144a8f] text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group mt-2"
                         >
                             {isLoading ? (
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

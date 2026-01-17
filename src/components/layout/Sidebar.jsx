@@ -39,7 +39,7 @@ const Sidebar = () => {
     return (
         <>
             {/* Desktop Vertical Sidebar */}
-            <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[260px] flex-col pt-24 pb-8 z-40 bg-[#195BAC] text-white overflow-y-auto border-r border-white/10 shadow-xl">
+            <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[260px] flex-col pt-24 pb-8 z-40 bg-[#0B1F3A] text-white overflow-y-auto border-r border-white/10 shadow-xl">
                 <div className="flex flex-col gap-2 px-4">
                     {navItems.map((item) => {
                         const active = isActive(item.path);
@@ -64,7 +64,16 @@ const Sidebar = () => {
                     })}
                 </div>
 
-                <div className="mt-auto px-6 py-4">
+                <div className="mt-auto px-6 py-4 space-y-4">
+                    {/* Offline Mode Toggle */}
+                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                        <span className="text-xs font-medium text-blue-100">Offline Mode</span>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" className="sr-only peer" />
+                            <div className="w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                    </div>
+
                     <p className="text-[10px] text-blue-200 text-center opacity-60">
                         &copy; 2026 BTC Drive.
                     </p>

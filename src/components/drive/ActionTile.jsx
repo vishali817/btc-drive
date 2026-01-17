@@ -9,10 +9,10 @@ const ActionTile = ({ action, onClick }) => {
             onClick={onClick}
             className="flex flex-col items-center gap-3 cursor-pointer group"
         >
-            <div className={`relative w-32 h-32 rounded-full border-2 border-dashed border-primary/30 flex items-center justify-center hover:border-primary hover:bg-primary/5 transition-all duration-300`}>
-                <Plus className="text-primary" size={32} />
+            <div className={`relative w-32 h-32 rounded-full border-2 border-dashed border-[#0B1F3B]/30 flex items-center justify-center hover:border-[#0B1F3B] hover:bg-[#0B1F3B]/5 transition-all duration-300`}>
+                <Plus className="text-[#0B1F3B]" size={32} />
             </div>
-            <span className="font-medium text-primary text-sm">{action.name}</span>
+            <span className="font-bold text-[#0B1F3B] text-sm">{action.name}</span>
         </motion.div>
     );
 };

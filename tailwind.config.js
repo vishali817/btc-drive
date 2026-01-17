@@ -9,9 +9,9 @@ export default {
             colors: {
                 background: '#E9F4FF', // Light Blue Background
                 primary: {
-                    DEFAULT: '#195BAC', // Deep Blue
-                    light: '#2B6CBD',
-                    dark: '#104080',
+                    DEFAULT: '#0B1F3B', // Dark Navy Blue (User Requested)
+                    light: '#1A3A5E',   // Lighter Navy
+                    dark: '#061121',    // Darker Navy
                 },
                 secondary: '#4B5563', // Gray 600
                 surface: {

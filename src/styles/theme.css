@@ -38,17 +38,17 @@
 
 /* 3D Depth Utilities */
 .depth-xs {
-    box-shadow: 0 4px 6px -1px rgba(25, 91, 172, 0.1), 0 2px 4px -1px rgba(25, 91, 172, 0.06);
+    box-shadow: 0 4px 6px -1px rgba(11, 31, 59, 0.1), 0 2px 4px -1px rgba(11, 31, 59, 0.06);
 }
 
 .depth-sm {
-    box-shadow: 0 10px 15px -3px rgba(25, 91, 172, 0.1), 0 4px 6px -2px rgba(25, 91, 172, 0.05);
+    box-shadow: 0 10px 15px -3px rgba(11, 31, 59, 0.1), 0 4px 6px -2px rgba(11, 31, 59, 0.05);
 }
 
 .depth-md {
-    box-shadow: 0 20px 25px -5px rgba(25, 91, 172, 0.1), 0 10px 10px -5px rgba(25, 91, 172, 0.04);
+    box-shadow: 0 20px 25px -5px rgba(11, 31, 59, 0.1), 0 10px 10px -5px rgba(11, 31, 59, 0.04);
 }
 
 .depth-lg {
-    box-shadow: 0 25px 50px -12px rgba(25, 91, 172, 0.25);
+    box-shadow: 0 25px 50px -12px rgba(11, 31, 59, 0.25);
 }

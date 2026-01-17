@@ -6,11 +6,13 @@ import ActionTile from './ActionTile';
 import { useNavigate } from 'react-router-dom';
 import FilePreviewModal from '../modals/FilePreviewModal';
 import UploadModal from '../modals/UploadModal';
+import { Info } from 'lucide-react';
 
 const DriveGrid = ({ items, viewMode, searchQuery }) => {
     const navigate = useNavigate();
     const [previewFile, setPreviewFile] = useState(null);
     const [isUploadOpen, setIsUploadOpen] = useState(false);
+    const [detailsFile, setDetailsFile] = useState(null);
 
     // Highlight Helper
     const getHighlightedName = (name) => {
@@ -46,6 +48,65 @@ const DriveGrid = ({ items, viewMode, searchQuery }) => {
         }
     };
 
+    const handleDetailsClick = (e, item) => {
+        e.stopPropagation();
+        setDetailsFile(item);
+    };
+
+    // Details Modal
+    const DetailsModal = ({ file, onClose }) => {
+        if (!file) return null;
+        return (
+            <div className="fixed inset-0 z-[60] flex items-center justify-end bg-black/20 backdrop-blur-sm" onClick={onClose}>
+                <motion.div
+                    initial={{ x: 300 }} animate={{ x: 0 }} exit={{ x: 300 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                    className="w-full max-w-sm h-full bg-white shadow-2xl p-6 overflow-y-auto border-l border-gray-100"
+                    onClick={e => e.stopPropagation()}
+                >
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-xl font-bold text-[#0B1F3A]">File Details</h2>
+                        <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">✕</button>
+                    </div>
+
+                    <div className="space-y-8">
+                        <div className="flex flex-col items-center text-center p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
+                            <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-blue-50">
+                                <span className="text-3xl font-bold text-[#0B1F3A] uppercase">
+                                    {file.fileType || 'DIR'}
+                                </span>
+                            </div>
+                            <h3 className="font-bold text-lg text-gray-900 break-all leading-tight">{file.name}</h3>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="group">
+                                <label className="text-xs font-bold text-blue-300 uppercase tracking-wider mb-1 block">Type</label>
+                                <p className="text-gray-700 font-medium border-b border-gray-100 pb-2">{file.type === 'folder' ? 'Folder' : (file.fileType || 'File').toUpperCase()}</p>
+                            </div>
+                            <div className="group">
+                                <label className="text-xs font-bold text-blue-300 uppercase tracking-wider mb-1 block">Size</label>
+                                <p className="text-gray-700 font-medium border-b border-gray-100 pb-2">{file.size || file.meta || 'Unknown'}</p>
+                            </div>
+                            <div className="group">
+                                <label className="text-xs font-bold text-blue-300 uppercase tracking-wider mb-1 block">Owner</label>
+                                <p className="text-gray-700 font-medium border-b border-gray-100 pb-2">{file.sharedBy || 'Me'}</p>
+                            </div>
+                            <div className="group">
+                                <label className="text-xs font-bold text-blue-300 uppercase tracking-wider mb-1 block">Created</label>
+                                <p className="text-gray-700 font-medium border-b border-gray-100 pb-2">{file.createdAt || 'Jan 10, 2026'}</p>
+                            </div>
+                            <div className="group">
+                                <label className="text-xs font-bold text-blue-300 uppercase tracking-wider mb-1 block">Modified</label>
+                                <p className="text-gray-700 font-medium border-b border-gray-100 pb-2">{file.modifiedAt || 'Jan 14, 2026'}</p>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    };
+
     // List View Render
     if (viewMode === 'list') {
         return (
@@ -53,48 +114,61 @@ const DriveGrid = ({ items, viewMode, searchQuery }) => {
                 <div className="flex flex-col gap-2">
                     {processedItems.map(item => (
                         <div
-                            key={item.id || item.name} // item.name is now object if highlighted? keys handle objects? no keys must be string.
-                            // If name is highlighted JSX, using it as key is bad. Use ID.
-                            // We use item.id mostly.
+                            key={item.id || item.name}
                             onClick={() => handleItemClick(item)}
-                            className="flex items-center gap-4 p-4 bg-white/40 rounded-xl hover:bg-white/80 transition-colors border border-transparent hover:border-gray-200 cursor-pointer group"
+                            className="flex items-center gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-xl hover:bg-white transition-all border border-transparent hover:border-blue-100 cursor-pointer group shadow-sm hover:shadow-md"
                         >
-                            {/* Icon/Type */}
                             <div className="w-10 flex justify-center flex-shrink-0">
-                                {/* Simplified Type Icon or Text */}
-                                <span className="text-[10px] font-bold uppercase text-gray-400 group-hover:text-primary transition-colors">
+                                <span className="text-[10px] font-bold uppercase text-gray-400 group-hover:text-[#0B1F3A] transition-colors">
                                     {item.type === 'action' ? 'NEW' : item.type === 'folder' ? 'DIR' : item.fileType ? item.fileType.substring(0, 3) : 'FILE'}
                                 </span>
                             </div>
 
-                            {/* Name & Type Label */}
                             <div className="flex-1 flex items-center gap-4 min-w-0">
                                 <div className="flex flex-col min-w-0 flex-1">
-                                    <span className="font-medium text-gray-700 truncate block text-sm">{item.name}</span>
+                                    <span className="font-medium text-gray-700 truncate block text-sm group-hover:text-[#0B1F3A] transition-colors">{item.name}</span>
                                 </div>
-
-                                {/* Fixed Type Label to prevent collision */}
                                 <div className="w-24 hidden md:block flex-shrink-0">
-                                    <span className="text-xs font-bold text-gray-400 uppercase bg-gray-100 px-2 py-1 rounded-md whitespace-nowrap overflow-hidden text-ellipsis block text-center">
+                                    <span className="text-xs font-bold text-gray-400 uppercase bg-gray-100/80 px-2 py-1 rounded-md whitespace-nowrap overflow-hidden text-ellipsis block text-center">
                                         {item.type === 'folder' ? 'Folder' : item.fileType || 'File'}
                                     </span>
                                 </div>
+                                {item.sharedDate ? (
+                                    <div className="w-48 hidden lg:block flex-shrink-0 text-right">
+                                        <span className="text-xs text-gray-500 font-medium whitespace-nowrap">
+                                            {item.sharedDate}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="w-48 hidden lg:block flex-shrink-0 text-right">
+                                        <span className="text-xs text-gray-500 font-medium whitespace-nowrap">
+                                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString() + ' • ' + new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Jan 16, 2026 • 10:00 AM'}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Meta / Size */}
                             <div className="w-24 text-right flex-shrink-0">
                                 <span className="text-sm text-gray-500 font-medium">{item.meta || item.size}</span>
                             </div>
+
+                            <button
+                                onClick={(e) => handleDetailsClick(e, item)}
+                                className="p-2 text-gray-400 hover:text-[#0B1F3A] hover:bg-blue-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                title="View Details"
+                            >
+                                <Info size={18} />
+                            </button>
                         </div>
                     ))}
                 </div>
-                {/* Preview Modal (List View Context) */}
                 <FilePreviewModal file={previewFile} isOpen={!!previewFile} onClose={() => setPreviewFile(null)} />
+                {detailsFile && <DetailsModal file={detailsFile} onClose={() => setDetailsFile(null)} />}
             </>
         );
     }
 
-    // Grid View Render
+    // Grid View Render ... uses existing logic mostly but updated styles
     return (
         <>
             <motion.div
@@ -103,24 +177,21 @@ const DriveGrid = ({ items, viewMode, searchQuery }) => {
             >
                 {processedItems.map((item, index) => {
                     const key = item.id || index;
-
                     if (item.type === 'folder') {
                         return <FolderTile key={key} folder={item} onClick={() => handleItemClick(item)} />;
                     }
-
                     if (item.type === 'file') {
-                        // Pass onClick if FileTile supports it, otherwise wrap it
                         return (
-                            <div key={key} onClick={() => handleItemClick(item)}>
+                            <div key={key} onClick={() => handleItemClick(item)} className="relative group">
                                 <FileTile file={item} />
+                                {/* Overlay generic details button for Grid as well? FileTile logic might be internal. 
+                                    But we can wrap it. */}
                             </div>
                         );
                     }
-
                     if (item.type === 'action') {
                         return <ActionTile key={key} action={item} onClick={() => handleItemClick(item)} />;
                     }
-
                     return null;
                 })}
             </motion.div>
@@ -128,6 +199,7 @@ const DriveGrid = ({ items, viewMode, searchQuery }) => {
             {/* Preview Modal (Grid View Context) */}
             <FilePreviewModal file={previewFile} isOpen={!!previewFile} onClose={() => setPreviewFile(null)} />
             <UploadModal isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
+            {detailsFile && <DetailsModal file={detailsFile} onClose={() => setDetailsFile(null)} />}
         </>
     );
 };

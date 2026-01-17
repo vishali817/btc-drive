@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import btcLogo from '../../assets/logo/btc-logo.png';
-import { Search, Settings, Bell, User, Plus, Cloud } from 'lucide-react';
+import { Search, Settings, Bell, User, Plus, Cloud, FilePlus, FolderPlus, Sparkles } from 'lucide-react';
 import StaggeredMenu from '../animations/StaggeredMenu';
 import CircularButton from '../common/CircularButton';
 import { driveData } from '../../data/driveData';
@@ -16,6 +16,8 @@ import UpgradeModal from '../modals/UpgradeModal';
 import LogoutModal from '../modals/LogoutModal';
 import ProfileModal from '../modals/ProfileModal';
 
+import AIChatWidget from '../ai/AIChatWidget';
+
 const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout }) => {
     const { topbar } = driveData.layout;
     const { search, actions } = topbar;
@@ -28,10 +30,12 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     // isSettingsOpen comes from props now
     const [isActivityOpen, setIsActivityOpen] = useState(false);
+    const [isAIChatOpen, setIsAIChatOpen] = useState(false);
 
     // Refs for Dropdown Triggers
     const profileRef = useRef(null);
     const notificationRef = useRef(null);
+    const newMenuRef = useRef(null);
 
     const toggleMenu = (menu) => {
         if (activeMenu === menu) {
@@ -44,7 +48,7 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
     const handleAction = (id) => {
         switch (id) {
             case 'upload':
-                setIsUploadOpen(true);
+                // Handled in local state for dropdown now
                 break;
             case 'settings':
                 setIsSettingsOpen(true);
@@ -54,6 +58,9 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                 break;
             case 'profile':
                 toggleMenu('profile');
+                break;
+            case 'new-menu':
+                toggleMenu('new-menu');
                 break;
             default:
                 console.log(`Unknown action: ${id}`);
@@ -86,7 +93,7 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
 
     return (
         <>
-            <nav className="fixed top-0 left-0 w-full px-8 py-4 z-50 flex items-center justify-between pointer-events-none bg-[#195BAC] border-b border-white/10 shadow-lg">
+            <nav className="fixed top-0 left-0 w-full px-8 py-4 z-50 flex items-center justify-between pointer-events-none bg-[#0B1F3B] border-b border-white/10 shadow-lg">
                 {/* Gradient Overlay for Header readability - Removed since solid bg */}
 
                 {/* Brand - Left */}
@@ -113,6 +120,18 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                             className="w-full h-12 pl-12 pr-4 bg-white/10 border border-white/20 rounded-2xl shadow-sm focus:bg-white/20 focus:shadow-md focus:border-white/40 outline-none transition-all duration-300 text-white placeholder:text-blue-200/70 font-medium"
                         />
                     </div>
+                </div>
+
+                {/* AI Button - Next to Search */}
+                <div className="pointer-events-auto mr-4 hidden md:block">
+                    <button
+                        onClick={() => setIsAIChatOpen(!isAIChatOpen)}
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium shadow-lg transition-all text-sm ${isAIChatOpen ? 'bg-white text-[#0B1F3B] scale-105' : 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:shadow-purple-500/20 hover:scale-105'}`}
+                    >
+                        <Sparkles size={16} />
+                        <span>AI Assist</span>
+                    </button>
+                    <AIChatWidget isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
                 </div>
 
                 {/* Actions - Right */}
@@ -144,13 +163,46 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                         <NotificationMenu onViewAll={handleViewAllActivity} />
                     </DropdownMenu>
 
-                    <button
-                        onClick={() => handleAction('upload')}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-white text-[#195BAC] rounded-xl font-bold shadow-lg shadow-black/10 hover:shadow-black/20 active:scale-95 transition-all duration-300 mr-2"
-                    >
-                        <Plus size={18} strokeWidth={3} />
-                        New
-                    </button>
+                    <div className="relative" ref={newMenuRef}>
+                        <button
+                            onClick={() => handleAction('new-menu')}
+                            className="flex items-center gap-2 px-6 py-2.5 bg-white text-[#0B1F3A] rounded-xl font-bold shadow-lg shadow-black/10 hover:shadow-black/20 active:scale-95 transition-all duration-300 mr-2"
+                        >
+                            <Plus size={18} strokeWidth={3} />
+                            New
+                        </button>
+
+                        {/* New Menu Dropdown */}
+                        <DropdownMenu
+                            isOpen={activeMenu === 'new-menu'}
+                            onClose={() => setActiveMenu(null)}
+                            triggerRef={newMenuRef}
+                            width="w-56"
+                        >
+                            <div className="p-2 space-y-1">
+                                <button
+                                    onClick={() => {
+                                        setActiveMenu(null);
+                                        setIsUploadOpen(true);
+                                    }}
+                                    className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl transition-colors text-left"
+                                >
+                                    <FilePlus size={18} className="text-blue-500" />
+                                    <span>File Upload</span>
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setActiveMenu(null);
+                                        window.dispatchEvent(new CustomEvent('open-create-folder'));
+                                    }}
+                                    className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl transition-colors text-left"
+                                >
+                                    <FolderPlus size={18} className="text-yellow-500" />
+                                    <span>New Folder</span>
+                                </button>
+                            </div>
+                        </DropdownMenu>
+                    </div>
 
                     <StaggeredMenu
                         items={[

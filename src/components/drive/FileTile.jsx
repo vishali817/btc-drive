@@ -34,9 +34,15 @@ const FileTile = ({ file }) => {
                 </div>
             </div>
 
-            <div className="text-center">
-                <h3 className="font-medium text-text-secondary text-sm group-hover:text-primary transition-colors truncate max-w-[140px]">{file.name}</h3>
-                <span className="text-xs text-gray-400">{file.size}</span>
+            <div className="text-center w-full px-2">
+                <h3 className="font-bold text-[#0B1F3B] text-sm group-hover:text-blue-700 transition-colors truncate w-full block">{file.name}</h3>
+                <div className="flex flex-col gap-0.5 mt-1">
+                    <span className="text-[10px] text-gray-500 font-medium">{file.size}</span>
+                    <span className="text-[9px] text-gray-400">
+                        {file.sharedDate ? file.sharedDate.replace('Shared on ', '') :
+                            file.createdAt ? new Date(file.createdAt).toLocaleDateString() : 'Jan 16, 2026'}
+                    </span>
+                </div>
             </div>
         </motion.div>
     );

@@ -49,6 +49,13 @@ const Layout = ({ onLogout }) => {
         }
     }, [location, onLogout, navigate]);
 
+    // Event Listener for Navbar actions
+    useEffect(() => {
+        const handleOpenCreateFolder = () => setIsCreateFolderOpen(true);
+        window.addEventListener('open-create-folder', handleOpenCreateFolder);
+        return () => window.removeEventListener('open-create-folder', handleOpenCreateFolder);
+    }, []);
+
     // Import driveData is needed. Since I can't easily add import at top with this tool range, 
     // I will use a minimal initial state and hope Drive populates it or rely on Drive to initialize?
     // Better: Initialize with empty or default. 
@@ -126,9 +133,7 @@ const Layout = ({ onLogout }) => {
                 <Outlet context={{ searchQuery, fileSystem }} />
             </main>
 
-            <UploadButton onAction={handleUploadAction} />
-
-            {/* Global Modals triggered by FAB */}
+            {/* Global Modals triggered by Navbar or Events */}
             <UploadModal isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
             <CreateFolderModal
                 isOpen={isCreateFolderOpen}
