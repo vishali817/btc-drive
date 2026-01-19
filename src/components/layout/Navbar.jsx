@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import btcLogo from '../../assets/logo/btc-logo.png';
-import { Search, Settings, Bell, User, Plus, Cloud, FilePlus, FolderPlus, Sparkles } from 'lucide-react';
+import { Search, Settings, Bell, User, Plus, Cloud, FilePlus, FolderPlus, Sparkles, HelpCircle } from 'lucide-react';
 import StaggeredMenu from '../animations/StaggeredMenu';
 import CircularButton from '../common/CircularButton';
 import { driveData } from '../../data/driveData';
@@ -9,6 +9,7 @@ import { driveData } from '../../data/driveData';
 import DropdownMenu from '../common/DropdownMenu';
 import ProfileMenu from '../menus/ProfileMenu';
 import NotificationMenu from '../menus/NotificationMenu';
+import SupportMenu from '../menus/SupportMenu';
 import UploadModal from '../modals/UploadModal';
 import SettingsDrawer from '../modals/SettingsDrawer';
 import ActivityDrawer from '../modals/ActivityDrawer';
@@ -23,7 +24,7 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
     const { search, actions } = topbar;
 
     // UI States
-    const [activeMenu, setActiveMenu] = useState(null); // 'profile' | 'notifications' | null
+    const [activeMenu, setActiveMenu] = useState(null); // 'profile' | 'notifications' | 'support' | null
     const [isUploadOpen, setIsUploadOpen] = useState(false);
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
     const [isLogoutOpen, setIsLogoutOpen] = useState(false);
@@ -35,6 +36,7 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
     // Refs for Dropdown Triggers
     const profileRef = useRef(null);
     const notificationRef = useRef(null);
+    const supportRef = useRef(null);
     const newMenuRef = useRef(null);
 
     const toggleMenu = (menu) => {
@@ -55,6 +57,9 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                 break;
             case 'notifications':
                 toggleMenu('notifications');
+                break;
+            case 'support':
+                toggleMenu('support');
                 break;
             case 'profile':
                 toggleMenu('profile');
@@ -96,7 +101,7 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
             <nav className="fixed top-0 left-0 w-full px-8 py-4 z-50 flex items-center justify-between pointer-events-none bg-[#195bac] border-b border-white/10 shadow-lg">
                 {/* Brand - Left */}
                 <div className="pointer-events-auto flex items-center gap-3 w-[260px]">
-                    <div className="bg-white rounded-full p-2 shadow-sm flex items-center justify-center">
+                    <div className="bg-white rounded-full w-10 h-10 p-2 shadow-sm flex items-center justify-center">
                         <img src={btcLogo} alt="BTC Drive" className="h-5 w-auto" />
                     </div>
                     <div className="flex flex-col">
@@ -106,8 +111,8 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                 </div>
 
                 {/* Search Bar - Center */}
-                <div className="pointer-events-auto flex-1 max-w-2xl px-8">
-                    <div className="relative group">
+                <div className="pointer-events-auto flex-1 max-w-2xl px-8 flex items-center gap-3">
+                    <div className="relative group flex-1">
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                             <Search className="text-blue-200 group-focus-within:text-white transition-colors" size={20} />
                         </div>
@@ -118,21 +123,40 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                             className="w-full h-12 pl-12 pr-4 bg-white/10 border border-white/20 rounded-2xl shadow-sm focus:bg-white/20 focus:shadow-md focus:border-white/40 outline-none transition-all duration-300 text-white placeholder:text-blue-200/70 font-medium"
                         />
                     </div>
-                </div>
 
-                {/* AI Button - Next to Search */}
-                <div className="pointer-events-auto mr-4 hidden md:block">
-                    <button
-                        onClick={() => setIsAIChatOpen(!isAIChatOpen)}
-                        className={`flex items-center justify-center w-10 h-10 rounded-full font-medium shadow-lg transition-all duration-300 ${isAIChatOpen ? 'bg-white text-primary scale-105' : 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:shadow-purple-500/20 hover:scale-105'}`}
-                    >
-                        <Sparkles size={18} />
-                    </button>
-                    <AIChatWidget isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
+                    {/* AI Button - Attached to Search */}
+                    <div className="hidden md:block">
+                        <button
+                            onClick={() => setIsAIChatOpen(!isAIChatOpen)}
+                            className={`flex items-center justify-center w-10 h-10 rounded-full font-medium shadow-lg transition-all duration-300 border-2 border-white ${isAIChatOpen ? 'bg-white text-primary scale-105' : 'bg-gradient-to-r from-[#195BAC] to-blue-400 text-white hover:shadow-blue-500/20 hover:scale-105'}`}
+                        >
+                            <Sparkles size={18} />
+                        </button>
+                        <AIChatWidget isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
+                    </div>
                 </div>
 
                 {/* Actions - Right */}
                 <div className="pointer-events-auto flex items-center gap-4">
+                    {/* Support / Help */}
+                    <div className="relative pointer-events-auto" ref={supportRef}>
+                        <CircularButton
+                            onClick={() => handleAction('support')}
+                            size="md"
+                            className={`bg-white/10 hover:bg-white/20 border-white/10 text-white`}
+                        >
+                            <HelpCircle size={20} />
+                        </CircularButton>
+                        <DropdownMenu
+                            isOpen={activeMenu === 'support'}
+                            onClose={() => setActiveMenu(null)}
+                            triggerRef={supportRef}
+                            width="w-64"
+                        >
+                            <SupportMenu onClose={() => setActiveMenu(null)} />
+                        </DropdownMenu>
+                    </div>
+
                     {/* Notification Bell */}
                     <div className="relative" ref={notificationRef}>
                         <CircularButton
