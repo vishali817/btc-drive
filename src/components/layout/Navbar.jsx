@@ -101,8 +101,8 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
             <nav className="fixed top-0 left-0 w-full px-8 py-4 z-50 flex items-center justify-between pointer-events-none bg-[#195bac] border-b border-white/10 shadow-lg">
                 {/* Brand - Left */}
                 <div className="pointer-events-auto flex items-center gap-3 w-[260px]">
-                    <div className="bg-white rounded-full w-10 h-10 p-2 shadow-sm flex items-center justify-center">
-                        <img src={btcLogo} alt="BTC Drive" className="h-5 w-auto" />
+                    <div className="bg-white rounded-full w-12 h-12 p-2 shadow-sm flex items-center justify-center">
+                        <img src={btcLogo} alt="BTC Drive" className="h-7 w-auto" />
                     </div>
                     <div className="flex flex-col">
                         <span className="text-xl font-bold tracking-tight text-white leading-none">BTC <span className="text-blue-200">Drive</span></span>
