@@ -265,6 +265,7 @@ const DriveGrid = ({ items, viewMode, searchQuery }) => {
                                             <span className="font-medium text-gray-700 truncate block text-sm group-hover:text-primary transition-colors">{item.name}</span>
                                             <span className="text-xs text-gray-400 font-medium truncate mt-0.5">
                                                 {item.sharedDate || (item.createdAt ? new Date(item.createdAt).toLocaleDateString() + ' • ' + new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Jan 16, 2026 • 10:00 AM')}
+                                                <span className="sm:hidden"> • {item.meta || item.size}</span>
                                             </span>
                                         </>
                                     )}
@@ -276,7 +277,7 @@ const DriveGrid = ({ items, viewMode, searchQuery }) => {
                                 </div>
                             </div>
 
-                            <div className="w-24 text-right flex-shrink-0">
+                            <div className="w-24 text-right flex-shrink-0 hidden sm:block">
                                 <span className="text-sm text-gray-500 font-medium">{item.meta || item.size}</span>
                             </div>
 
@@ -308,7 +309,7 @@ const DriveGrid = ({ items, viewMode, searchQuery }) => {
         <>
             <motion.div
                 layout
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24"
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24"
             >
                 {processedItems.map((item, index) => {
                     const key = item.id || index;

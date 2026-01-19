@@ -5,7 +5,7 @@ import UpgradeModal from '../modals/UpgradeModal';
 import Dock from '../animations/Dock';
 import { useState } from 'react';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { sidebar } = driveData.layout;
@@ -40,16 +40,32 @@ const Sidebar = () => {
 
     return (
         <>
-            {/* Desktop Vertical Sidebar */}
-            {/* Desktop Vertical Sidebar */}
-            <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[260px] flex-col pt-24 pb-8 z-40 bg-[#0D2B45] text-white overflow-y-auto border-r border-white/10 shadow-xl transition-colors duration-300">
+            {/* Mobile Backdrop */}
+            {isOpen && (
+                <div
+                    onClick={onClose}
+                    className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm transition-opacity duration-300"
+                />
+            )}
+
+            {/* Responsive Sidebar (Drawer on Mobile, Fixed on Desktop) */}
+            <aside className={`
+                fixed left-0 top-0 bottom-0 w-[260px] flex flex-col pt-24 pb-8 z-40 
+                bg-[#0D2B45] text-white overflow-y-auto border-r border-white/10 shadow-xl 
+                transition-transform duration-300 ease-in-out
+                ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
+                md:translate-x-0
+            `}>
                 <div className="flex flex-col gap-2 px-4">
                     {navItems.map((item) => {
                         const active = isActive(item.path);
                         return (
                             <button
                                 key={item.id}
-                                onClick={() => navigate(item.path)}
+                                onClick={() => {
+                                    navigate(item.path);
+                                    if (window.innerWidth < 768) onClose(); // Close on mobile click
+                                }}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group text-sm font-medium
                                     ${active
                                         ? 'bg-[#195BAC] text-white shadow-lg shadow-black/5 font-bold'
@@ -97,10 +113,10 @@ const Sidebar = () => {
                 </div>
             </aside>
 
-            {/* Mobile Dock Navigation - Hide on Desktop */}
-            <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+            {/* Mobile Dock Navigation - Hide on Desktop - COMMENTING OUT PER USER REQUEST TO CONVERT SIDEBAR */}
+            {/* <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
                 <Dock items={dockItems} />
-            </div>
+            </div> */}
 
             {/* Upgrade Modal */}
             <UpgradeModal isOpen={isUpgradeOpen} onClose={() => setIsUpgradeOpen(false)} />

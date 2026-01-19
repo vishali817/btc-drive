@@ -12,11 +12,11 @@ const Starred = () => {
     return (
         <div className="animate-fade-in pb-20 px-8">
             <header className="mb-4">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     <h1 className="text-3xl font-bold text-gray-900">Starred</h1>
 
                     {/* View Controls */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
                         {/* Filters */}
                         <select
                             value={activeFilters.type}

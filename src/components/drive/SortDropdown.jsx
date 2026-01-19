@@ -55,58 +55,83 @@ const SortDropdown = ({ activeSort, sortDirection, placement, onSortChange, onDi
             </Tooltip>
 
             {isOpen && (
-                <div className="absolute right-0 top-full mt-1 w-max min-w-[200px] bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-[100] max-h-[60vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-100 origin-top-right">
-                    <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Sort by
-                    </div>
-                    {options.map((option) => (
+                <>
+                    {/* Mobile Backdrop */}
+                    <div
+                        className="fixed inset-0 bg-black/40 z-[90] md:hidden backdrop-blur-sm"
+                        onClick={() => setIsOpen(false)}
+                    />
+
+                    {/* Dropdown / Bottom Sheet */}
+                    <div className={`
+                        fixed bottom-0 left-0 right-0 w-full bg-white z-[100] overflow-y-auto 
+                        rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] border-t border-gray-100 py-4 max-h-[80vh]
+                        animate-in slide-in-from-bottom duration-300
+                        md:absolute md:right-0 md:top-full md:mt-1 md:w-max md:min-w-[200px] md:bottom-auto md:left-auto md:rounded-lg md:shadow-xl md:py-2 md:border
+                        md:animate-in md:fade-in md:zoom-in-95 md:duration-100 md:origin-top-right
+                    `}>
+                        <div className="px-4 md:px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 md:mb-0">
+                            Sort by
+                        </div>
+                        {options.map((option) => (
+                            <button
+                                key={option.id}
+                                onClick={() => handleSortClick(option.id)}
+                                className="w-full flex items-center justify-between px-6 md:px-4 py-3 md:py-2 text-base md:text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap active:bg-gray-100"
+                            >
+                                <span>{option.label}</span>
+                                {activeSort === option.id && <Check size={18} className="text-gray-900 ml-3" />}
+                            </button>
+                        ))}
+
+                        <div className="my-2 border-t border-gray-100" />
+
+                        <div className="px-4 md:px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider md:hidden mb-2">
+                            Order
+                        </div>
+
                         <button
-                            key={option.id}
-                            onClick={() => handleSortClick(option.id)}
-                            className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap"
+                            onClick={() => { onDirectionChange('asc'); setIsOpen(false); }}
+                            className="w-full flex items-center justify-between px-6 md:px-4 py-3 md:py-2 text-base md:text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap active:bg-gray-100"
                         >
-                            <span>{option.label}</span>
-                            {activeSort === option.id && <Check size={16} className="text-gray-900 ml-3" />}
+                            <span>{getDirectionLabel(activeSort, 'asc')}</span>
+                            {sortDirection === 'asc' && <Check size={18} className="text-gray-900 ml-3" />}
                         </button>
-                    ))}
+                        <button
+                            onClick={() => { onDirectionChange('desc'); setIsOpen(false); }}
+                            className="w-full flex items-center justify-between px-6 md:px-4 py-3 md:py-2 text-base md:text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap active:bg-gray-100"
+                        >
+                            <span>{getDirectionLabel(activeSort, 'desc')}</span>
+                            {sortDirection === 'desc' && <Check size={18} className="text-gray-900 ml-3" />}
+                        </button>
 
-                    <div className="my-2 border-t border-gray-100" />
+                        {placement && (
+                            <>
+                                <div className="my-2 border-t border-gray-100" />
+                                <div className="px-4 md:px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider md:hidden mb-2">
+                                    Placement
+                                </div>
+                                <button
+                                    onClick={() => { onPlacementChange('top'); setIsOpen(false); }}
+                                    className="w-full flex items-center justify-between px-6 md:px-4 py-3 md:py-2 text-base md:text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap active:bg-gray-100"
+                                >
+                                    <span>Folders on top</span>
+                                    {placement === 'top' && <Check size={18} className="text-gray-900 ml-3" />}
+                                </button>
+                                <button
+                                    onClick={() => { onPlacementChange('mixed'); setIsOpen(false); }}
+                                    className="w-full flex items-center justify-between px-6 md:px-4 py-3 md:py-2 text-base md:text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap active:bg-gray-100"
+                                >
+                                    <span>Mixed with files</span>
+                                    {placement === 'mixed' && <Check size={18} className="text-gray-900 ml-3" />}
+                                </button>
+                            </>
+                        )}
 
-                    <button
-                        onClick={() => { onDirectionChange('asc'); setIsOpen(false); }}
-                        className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap"
-                    >
-                        <span>{getDirectionLabel(activeSort, 'asc')}</span>
-                        {sortDirection === 'asc' && <Check size={16} className="text-gray-900 ml-3" />}
-                    </button>
-                    <button
-                        onClick={() => { onDirectionChange('desc'); setIsOpen(false); }}
-                        className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap"
-                    >
-                        <span>{getDirectionLabel(activeSort, 'desc')}</span>
-                        {sortDirection === 'desc' && <Check size={16} className="text-gray-900 ml-3" />}
-                    </button>
-
-                    {placement && (
-                        <>
-                            <div className="my-2 border-t border-gray-100" />
-                            <button
-                                onClick={() => { onPlacementChange('top'); setIsOpen(false); }}
-                                className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap"
-                            >
-                                <span>Folders on top</span>
-                                {placement === 'top' && <Check size={16} className="text-gray-900 ml-3" />}
-                            </button>
-                            <button
-                                onClick={() => { onPlacementChange('mixed'); setIsOpen(false); }}
-                                className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left whitespace-nowrap"
-                            >
-                                <span>Mixed with files</span>
-                                {placement === 'mixed' && <Check size={16} className="text-gray-900 ml-3" />}
-                            </button>
-                        </>
-                    )}
-                </div>
+                        {/* Mobile handle/close indicator */}
+                        <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-4 mb-2 md:hidden"></div>
+                    </div>
+                </>
             )}
         </div>
     );

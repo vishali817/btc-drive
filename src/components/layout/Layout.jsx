@@ -32,6 +32,7 @@ const Layout = ({ onLogout }) => {
     const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false); // Lifted state
     const [toast, setToast] = useState(null);
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false); // Mobile Sidebar State
 
     // Route Actions
     useEffect(() => {
@@ -43,6 +44,8 @@ const Layout = ({ onLogout }) => {
             setIsSettingsOpen(true);
             navigate('/my-drive', { replace: true });
         }
+        // Close mobile sidebar on route change
+        setIsMobileSidebarOpen(false);
     }, [location, onLogout, navigate]);
 
     // Event Listener for Navbar actions
@@ -51,19 +54,6 @@ const Layout = ({ onLogout }) => {
         window.addEventListener('open-create-folder', handleOpenCreateFolder);
         return () => window.removeEventListener('open-create-folder', handleOpenCreateFolder);
     }, []);
-
-    // Import driveData is needed. Since I can't easily add import at top with this tool range, 
-    // I will use a minimal initial state and hope Drive populates it or rely on Drive to initialize?
-    // Better: Initialize with empty or default. 
-    // Actually, I can replace the whole component content or imports too.
-    // I'll assume I can't reach imports easily without reading file again. 
-    // I will use a hardcoded initial state or Mock Data here if I can't reach imports.
-    // Wait, Sidebar imports driveData. I can see imports in previous 'view_file'. 
-    // Layout imports Navbar, Sidebar...
-    // I'll add the import via a separate tool call if needed or just use `window.driveData` if available? No.
-    // I will define a basic initial set if I can't access `driveData`. 
-    // OR I will simply use `useState([])` and let `Drive` push data up? No, `Drive` expects data down.
-    // I will try to add the import first.
 
     // Global Items State (Lifted from Drive)
     const [fileSystem, setFileSystem] = useState({
@@ -121,12 +111,16 @@ const Layout = ({ onLogout }) => {
                 isSettingsOpen={isSettingsOpen}
                 setIsSettingsOpen={setIsSettingsOpen}
                 onLogout={onLogout}
+                onToggleSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
             />
-            <Sidebar />
+            <Sidebar
+                isOpen={isMobileSidebarOpen}
+                onClose={() => setIsMobileSidebarOpen(false)}
+            />
 
             {/* Conditional padding for sidebar gap */}
-            <main className={`flex-1 h-full overflow-y-auto w-full pt-24 pb-32 relative z-10 scroll-smooth ${['/settings', '/help'].includes(location.pathname) ? 'md:pl-[280px]' : 'md:pl-[265px]'
-                }`}>
+            <main className={`flex-1 h-full overflow-y-auto w-full pt-20 pb-20 md:pt-24 md:pb-32 relative z-10 scroll-smooth transition-all duration-300 ${['/settings', '/help'].includes(location.pathname) ? 'md:pl-[280px]' : 'md:pl-[265px]'
+                } px-4 md:px-0`}>
                 {/* Pass search query to children pages */}
                 <Outlet context={{ searchQuery, fileSystem }} />
             </main>
