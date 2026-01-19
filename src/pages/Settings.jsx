@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Cloud } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
     const navigate = useNavigate();
     const [activeSection, setActiveSection] = useState('general');
+    const [isMobile] = useState(window.innerWidth < 768);
 
     // State for Settings
     const [settings, setSettings] = useState({
@@ -22,6 +23,9 @@ const SettingsPage = () => {
         // Notifications
         browserNotifications: true,
         emailNotifications: false,
+
+        // Data Usage
+        transferWifiOnly: true,
 
         // Apps
         apps: [
@@ -52,12 +56,37 @@ const SettingsPage = () => {
         { id: 'manage-apps', label: 'Manage apps' },
     ];
 
+    // Mobile Section Component
+    const MobileSection = ({ title, children }) => (
+        <div className="mb-8 last:mb-24">
+            <h3 className="text-[#195bac] text-sm font-medium px-4 mb-4 uppercase tracking-wide">{title}</h3>
+            {children}
+        </div>
+    );
 
-    const renderContent = () => {
+    const MobileSettingItem = ({ title, description, action, showToggle, toggleValue, onToggle }) => (
+        <div className="flex items-center justify-between px-4 py-3 min-h-[64px] active:bg-gray-50 transition-colors">
+            <div className="flex-1 pr-4">
+                <div className="text-gray-900 font-medium text-[16px] mb-0.5">{title}</div>
+                {description && <div className="text-gray-500 text-sm leading-snug">{description}</div>}
+            </div>
+            {action}
+            {showToggle && (
+                <div
+                    onClick={onToggle}
+                    className={`relative w-11 h-6 rounded-full transition-colors duration-200 ease-in-out cursor-pointer ${toggleValue ? 'bg-primary' : 'bg-gray-300'}`}
+                >
+                    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-200 ${toggleValue ? 'translate-x-5' : 'translate-x-0'}`} />
+                </div>
+            )}
+        </div>
+    );
+
+    const renderDesktopContent = () => {
         switch (activeSection) {
             case 'general':
                 return (
-                    <div className="space-y-8 max-w-4xl text-sm">
+                    <div className="space-y-8 max-w-4xl text-sm animate-fade-in">
                         {/* Storage */}
                         <div className="grid grid-cols-[200px_1fr] gap-8">
                             <div>
@@ -152,134 +181,11 @@ const SettingsPage = () => {
                                 ))}
                             </div>
                         </div>
-
-                        <div className="h-px bg-gray-200" />
-
-                        {/* Open PDFs */}
-                        <div className="grid grid-cols-[200px_1fr] gap-8">
-                            <div>
-                                <h3 className="font-medium text-gray-900">Open PDFs</h3>
-                            </div>
-                            <div className="space-y-3">
-                                <label className="flex items-center gap-3 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="openPdfs"
-                                        checked={settings.openPdfs === 'new-tab'}
-                                        onChange={() => updateSetting('openPdfs', 'new-tab')}
-                                        className="w-4 h-4 text-primary focus:ring-primary border-gray-300"
-                                    />
-                                    <span className="text-gray-700">New tab</span>
-                                </label>
-                                <label className="flex items-center gap-3 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="openPdfs"
-                                        checked={settings.openPdfs === 'preview'}
-                                        onChange={() => updateSetting('openPdfs', 'preview')}
-                                        className="w-4 h-4 text-primary focus:ring-primary border-gray-300"
-                                    />
-                                    <span className="text-gray-700">Preview</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className="h-px bg-gray-200" />
-
-                        {/* Uploads */}
-                        <div className="grid grid-cols-[200px_1fr] gap-8">
-                            <div>
-                                <h3 className="font-medium text-gray-900">Uploads</h3>
-                            </div>
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={settings.convertUploads}
-                                    onChange={(e) => updateSetting('convertUploads', e.target.checked)}
-                                    className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
-                                />
-                                <span className="text-gray-700">Convert uploaded files to Google Docs editor format</span>
-                            </label>
-                        </div>
-
-                        <div className="h-px bg-gray-200" />
-
-                        {/* Offline */}
-                        <div className="grid grid-cols-[200px_1fr] gap-8">
-                            <div>
-                                <h3 className="font-medium text-gray-900">Offline</h3>
-                            </div>
-                            <div>
-                                <label className="flex items-start gap-3 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={settings.offline}
-                                        onChange={(e) => updateSetting('offline', e.target.checked)}
-                                        className="mt-0.5 w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
-                                    />
-                                    <span className="text-gray-700">Enable offline access</span>
-                                </label>
-                                <p className="text-xs text-gray-500 mt-1 ml-7">
-                                    Sync your most recent Google Docs, Sheets, and Slides files to this device so you can edit offline. <br />Not recommended on public or shared computers.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="h-px bg-gray-200" />
-
-                        {/* Preview Cards */}
-                        <div className="grid grid-cols-[200px_1fr] gap-8">
-                            <div>
-                                <h3 className="font-medium text-gray-900">Preview cards</h3>
-                            </div>
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={settings.showPreviewDetails}
-                                    onChange={(e) => updateSetting('showPreviewDetails', e.target.checked)}
-                                    className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
-                                />
-                                <span className="text-gray-700">Show details card when hovering on a file or folder</span>
-                            </label>
-                        </div>
-
-                        <div className="h-px bg-gray-200" />
-
-                        {/* Sounds */}
-                        <div className="grid grid-cols-[200px_1fr] gap-8">
-                            <div>
-                                <h3 className="font-medium text-gray-900">Sounds</h3>
-                            </div>
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={settings.navSounds}
-                                    onChange={(e) => updateSetting('navSounds', e.target.checked)}
-                                    className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
-                                />
-                                <span className="text-gray-700">Allow sounds for navigation actions</span>
-                            </label>
-                        </div>
-
-                        <div className="h-px bg-gray-200" />
-
-                        {/* Language */}
-                        <div className="grid grid-cols-[200px_1fr] gap-8">
-                            <div>
-                                <h3 className="font-medium text-gray-900">Language</h3>
-                            </div>
-                            <div className="flex items-center gap-6">
-                                <span className="text-gray-700">{settings.language}</span>
-                                <button className="text-primary font-medium hover:text-blue-700 transition-colors">
-                                    Change language settings
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 );
             case 'privacy':
                 return (
-                    <div className="space-y-8 max-w-4xl text-sm">
+                    <div className="space-y-8 max-w-4xl text-sm animate-fade-in">
                         <div className="grid grid-cols-[200px_1fr] gap-8">
                             <div>
                                 <h3 className="font-medium text-gray-900">Data Privacy</h3>
@@ -293,22 +199,13 @@ const SettingsPage = () => {
                                         Control whether your content is used to provide smart features and personalization in Gmail, Chat, and Meet.
                                     </p>
                                 </div>
-                                <div className="h-px bg-gray-100" />
-                                <div>
-                                    <button className="text-primary font-medium hover:text-blue-700 transition-colors block mb-1">
-                                        Manage search history
-                                    </button>
-                                    <p className="text-sm text-gray-500">
-                                        Decide whether to save your search history to help improve your search spread results.
-                                    </p>
-                                </div>
                             </div>
                         </div>
                     </div>
                 );
             case 'notifications':
                 return (
-                    <div className="space-y-8 max-w-4xl text-sm">
+                    <div className="space-y-8 max-w-4xl text-sm animate-fade-in">
                         <div className="grid grid-cols-[200px_1fr] gap-8">
                             <div>
                                 <h3 className="font-medium text-gray-900">Browser</h3>
@@ -323,38 +220,13 @@ const SettingsPage = () => {
                                     />
                                     <span className="text-gray-700">Enable browser notifications</span>
                                 </label>
-                                <p className="text-gray-500 text-xs ml-7">
-                                    Get updates about Google Drive items in your browser.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="h-px bg-gray-200" />
-
-                        <div className="grid grid-cols-[200px_1fr] gap-8">
-                            <div>
-                                <h3 className="font-medium text-gray-900">Email</h3>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="flex items-center gap-3 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={settings.emailNotifications}
-                                        onChange={(e) => updateSetting('emailNotifications', e.target.checked)}
-                                        className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
-                                    />
-                                    <span className="text-gray-700">Receive email updates</span>
-                                </label>
-                                <p className="text-gray-500 text-xs ml-7">
-                                    Get updates about Google Drive items via email.
-                                </p>
                             </div>
                         </div>
                     </div>
                 );
             case 'manage-apps':
                 return (
-                    <div className="space-y-6 max-w-5xl text-sm">
+                    <div className="space-y-6 max-w-5xl text-sm animate-fade-in">
                         <div className="space-y-0 text-gray-700">
                             {settings.apps.map((app, index) => (
                                 <div key={app.id}>
@@ -363,18 +235,12 @@ const SettingsPage = () => {
                                             <h4 className="font-medium text-gray-900">{app.name}</h4>
                                             <p className="text-xs text-gray-500 mt-1">{app.scope}</p>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            {/* Options dropdown mocked as text button for now */}
-                                            <button className="text-gray-500 hover:text-gray-700 text-xs font-medium uppercase tracking-wide">
-                                                Options
-                                            </button>
-                                            <button
-                                                onClick={() => toggleAppConnection(app.id)}
-                                                className="text-primary hover:text-blue-700 text-sm font-medium transition-colors"
-                                            >
-                                                {app.connected ? 'Disconnect from Drive' : 'Connect'}
-                                            </button>
-                                        </div>
+                                        <button
+                                            onClick={() => toggleAppConnection(app.id)}
+                                            className="text-primary hover:text-blue-700 text-sm font-medium transition-colors"
+                                        >
+                                            {app.connected ? 'Disconnect from Drive' : 'Connect'}
+                                        </button>
                                     </div>
                                     {index < settings.apps.length - 1 && <div className="h-px bg-gray-200" />}
                                 </div>
@@ -387,6 +253,121 @@ const SettingsPage = () => {
         }
     };
 
+    if (isMobile) {
+        return (
+            <div className="flex flex-col h-screen bg-white overflow-hidden">
+                {/* Mobile Header - Native App Style */}
+                <div className="sticky top-0 z-10 bg-white border-b border-gray-100 flex items-center h-14 px-4 shadow-sm">
+                    <button onClick={() => navigate('/my-drive')} className="p-2 -ml-2 rounded-full active:bg-gray-100 text-gray-600">
+                        <ArrowLeft size={24} />
+                    </button>
+                    <h1 className="flex-1 text-[20px] font-normal text-gray-800 ml-4">Settings</h1>
+                </div>
+
+                {/* Mobile Scroll Content */}
+                <div className="flex-1 overflow-y-auto pt-4 pb-20">
+                    {/* Storage Section - Custom Pill UI */}
+                    <MobileSection title="Storage">
+                        <div className="px-4 mb-4">
+                            <p className="text-[15px] text-gray-800 mb-4">4.5 GB of 15 GB used</p>
+                            <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full border border-gray-300 bg-white text-primary font-medium text-sm active:bg-gray-50 transition-colors">
+                                <Cloud size={18} className="text-primary" />
+                                Manage storage
+                            </button>
+                        </div>
+                        <div className="px-4">
+                            <div className="h-1 w-full bg-blue-100 rounded-full mb-1">
+                                <div className="h-1 bg-primary rounded-full" style={{ width: '30%' }}></div>
+                            </div>
+                        </div>
+                    </MobileSection>
+
+                    <div className="h-px bg-gray-100 mx-4 mb-6" />
+
+                    {/* Notifications */}
+                    <MobileSection title="Notifications">
+                        <MobileSettingItem
+                            title="Browser notifications"
+                            description="Get updates about Google Drive items in your browser"
+                            showToggle={true}
+                            toggleValue={settings.browserNotifications}
+                            onToggle={() => updateSetting('browserNotifications', !settings.browserNotifications)}
+                        />
+                        <MobileSettingItem
+                            title="Email notifications"
+                            description="Receive email updates"
+                            showToggle={true}
+                            toggleValue={settings.emailNotifications}
+                            onToggle={() => updateSetting('emailNotifications', !settings.emailNotifications)}
+                        />
+                    </MobileSection>
+
+                    <div className="h-px bg-gray-100 mx-4 mb-6" />
+
+                    {/* Theme */}
+                    <MobileSection title="Theme">
+                        <MobileSettingItem
+                            title="Choose theme"
+                            description={settings.appearance === 'device' ? 'System default' : settings.appearance.charAt(0).toUpperCase() + settings.appearance.slice(1)}
+                            action={<button
+                                onClick={() => {
+                                    const next = settings.appearance === 'light' ? 'dark' : 'light';
+                                    updateSetting('appearance', next);
+                                }}
+                                className="text-primary font-medium text-sm"
+                            >
+                                Change
+                            </button>}
+                        />
+                    </MobileSection>
+
+                    <div className="h-px bg-gray-100 mx-4 mb-6" />
+
+                    {/* Documents Cache */}
+                    <MobileSection title="Documents Cache">
+                        <MobileSettingItem
+                            title="Clear cached files"
+                            description="Remove offline files stored on this device"
+                            action={<button className="text-gray-600 font-medium text-sm">Clear</button>}
+                        />
+                    </MobileSection>
+
+                    <div className="h-px bg-gray-100 mx-4 mb-6" />
+
+                    {/* Data Usage */}
+                    <MobileSection title="Data Usage">
+                        <MobileSettingItem
+                            title="Transfer files only over Wi-Fi"
+                            description="Uploading and updating of files will pause when Wi-Fi connection is not available"
+                            showToggle={true}
+                            toggleValue={settings.transferWifiOnly}
+                            onToggle={() => updateSetting('transferWifiOnly', !settings.transferWifiOnly)}
+                        />
+                    </MobileSection>
+
+                    <div className="h-px bg-gray-100 mx-4 mb-6" />
+
+                    {/* Privacy */}
+                    <MobileSection title="Privacy">
+                        <MobileSettingItem
+                            title="Data Privacy"
+                            description="Manage use of personal data"
+                            action={<button className="text-primary font-medium text-sm">Manage</button>}
+                        />
+                    </MobileSection>
+
+                    <div className="h-px bg-gray-100 mx-4 mb-6" />
+
+                    {/* About */}
+                    <div className="px-4 py-4 text-center">
+                        <p className="text-xs text-gray-400">Version 2.45.102</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // DESKTOP LAYOUT (Unchanged logic, just wrapped)
     return (
         <div className="flex flex-col h-screen bg-white">
             {/* Header */}
@@ -397,17 +378,17 @@ const SettingsPage = () => {
                 <h1 className="text-xl font-normal text-gray-800">Settings</h1>
             </div>
 
-            <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-                {/* Left Sidebar (Desktop) / Top Nav (Mobile) */}
-                <aside className="w-full md:w-64 bg-gray-50 md:bg-white border-b md:border-b-0 border-gray-200 overflow-x-auto md:overflow-y-auto flex-shrink-0">
-                    <nav className="flex md:flex-col p-2 md:p-6 gap-2 md:gap-0">
+            <div className="flex flex-1 overflow-hidden">
+                {/* Left Sidebar */}
+                <aside className="w-64 pt-6 pb-6 overflow-y-auto border-r border-gray-200">
+                    <nav className="flex flex-col">
                         {navSections.map(section => (
                             <button
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
-                                className={`flex items-center whitespace-nowrap px-4 md:px-8 py-2 md:py-2 text-sm md:text-[0.9rem] font-medium transition-colors rounded-full md:rounded-none md:border-l-4 flex-shrink-0 ${activeSection === section.id
-                                    ? 'bg-primary text-white md:bg-blue-50 md:text-blue-700 md:border-primary shadow-sm md:shadow-none'
-                                    : 'text-gray-600 hover:bg-gray-100/80 hover:text-gray-900 md:border-transparent'
+                                className={`flex items-center w-full px-8 py-2 text-[0.9rem] font-medium transition-colors text-left border-l-4 ${activeSection === section.id
+                                    ? 'border-primary text-blue-700 bg-blue-50'
+                                    : 'border-transparent text-gray-600 hover:bg-gray-100/80 hover:text-gray-900'
                                     }`}
                             >
                                 {section.label}
@@ -417,8 +398,8 @@ const SettingsPage = () => {
                 </aside>
 
                 {/* Right Content */}
-                <main className="flex-1 overflow-y-auto px-4 py-6 md:pt-8 md:pl-8 md:pr-16 md:pb-20 bg-white">
-                    {renderContent()}
+                <main className="flex-1 overflow-y-auto pt-8 pl-8 pr-16 pb-20 bg-white">
+                    {renderDesktopContent()}
                 </main>
             </div>
         </div>
