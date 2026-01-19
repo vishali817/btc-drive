@@ -11,7 +11,7 @@ const Shared = () => {
     const { searchQuery } = useOutletContext() || { searchQuery: '' };
 
     // Filter States
-    const [viewMode, setViewMode] = useState('grid');
+    const [viewMode, setViewMode] = useState(() => window.innerWidth < 768 ? 'list' : 'grid');
     const [activeFilters, setActiveFilters] = useState({ type: 'All', owner: 'Shared' });
 
     // Sort States
@@ -113,22 +113,41 @@ const Shared = () => {
         <div className="animate-fade-in pb-20 px-8">
             <header className="mb-2 bg-white/50 backdrop-blur-sm p-6 rounded-3xl border border-white/40 shadow-sm relative z-30">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-3">
-                        <div className="p-3 bg-purple-100 rounded-2xl text-purple-600 shadow-inner">
-                            <Users size={28} />
+                    {/* Row 1: Title + Mobile Toggles */}
+                    <div className="flex items-center justify-between w-full md:w-auto">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-purple-100 rounded-2xl text-purple-600 shadow-inner">
+                                <Users size={28} />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-bold text-primary">Shared with me</h1>
+                                <p className="text-gray-500 font-medium">Files shared by your team</p>
+                            </div>
                         </div>
-                        <div>
-                            <h1 className="text-3xl font-bold text-primary">Shared with me</h1>
-                            <p className="text-gray-500 font-medium">Files shared by your team</p>
+
+                        {/* Mobile Toggles */}
+                        <div className="flex md:hidden bg-white/50 p-1 rounded-xl shadow-sm border border-gray-200 ml-2">
+                            <button
+                                onClick={() => setViewMode('list')}
+                                className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'list' ? 'bg-white shadow text-primary' : 'text-gray-400 hover:text-gray-600'}`}
+                            >
+                                <ListIcon size={20} />
+                            </button>
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'grid' ? 'bg-white shadow text-primary' : 'text-gray-400 hover:text-gray-600'}`}
+                            >
+                                <LayoutGrid size={20} />
+                            </button>
                         </div>
                     </div>
 
-                    {/* Filter Dropdowns & View Toggle */}
-                    <div className="flex items-center gap-2 flex-wrap">
+                    {/* Row 2: Filters + Desktop Toggles */}
+                    <div className="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto">
                         <select
                             value={activeFilters.type}
                             onChange={(e) => handleFilterChange('type', e.target.value)}
-                            className="bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all hover:border-gray-300"
+                            className="w-full md:w-auto bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all hover:border-gray-300"
                         >
                             <option value="All">Type: All</option>
                             <option value="Folder">Folder</option>
@@ -140,13 +159,13 @@ const Shared = () => {
                         <select
                             value={activeFilters.owner}
                             onChange={(e) => handleFilterChange('owner', e.target.value)}
-                            className="bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all hover:border-gray-300"
+                            className="w-full md:w-auto bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all hover:border-gray-300"
                         >
                             <option value="Shared">Shared with me</option>
                             <option value="Me">Owned by me</option>
                         </select>
 
-                        <div className="ml-2">
+                        <div className="w-full md:w-auto ml-0 md:ml-2">
                             <SortDropdown
                                 type="shared"
                                 activeSort={sortId}
@@ -158,7 +177,7 @@ const Shared = () => {
                             />
                         </div>
 
-                        <div className="flex bg-white/50 p-1 rounded-xl shadow-sm border border-gray-200 ml-2">
+                        <div className="hidden md:flex bg-white/50 p-1 rounded-xl shadow-sm border border-gray-200 ml-2">
                             <button
                                 onClick={() => setViewMode('list')}
                                 className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'list' ? 'bg-white shadow text-primary' : 'text-gray-400 hover:text-gray-600'}`}
@@ -176,15 +195,17 @@ const Shared = () => {
                 </div>
 
                 {/* Tabs */}
-                <div className="flex gap-1 mt-8 border-b border-gray-200/60 pb-1">
+                <div className="flex w-full md:w-auto gap-1 mt-8 border-b border-gray-200/60 pb-1 overflow-x-auto">
                     {tabs.map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-6 py-3 font-bold text-sm transition-all relative rounded-t-lg ${activeTab === tab ? 'text-primary bg-white/60' : 'text-gray-400 hover:text-gray-600 hover:bg-white/30'}`}
+                            className={`flex-1 md:flex-none px-6 py-3 text-sm font-medium transition-all relative whitespace-nowrap ${activeTab === tab ? 'text-primary font-bold' : 'text-gray-500 hover:text-gray-700'}`}
                         >
                             {tab}
-                            {activeTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full" />}
+                            {activeTab === tab && (
+                                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full" />
+                            )}
                         </button>
                     ))}
                 </div>

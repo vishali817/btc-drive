@@ -11,6 +11,7 @@ import Storage from './pages/Storage';
 import SettingsPage from './pages/Settings';
 import LandingPage from './pages/LandingPage';
 import Help from './pages/Help';
+import Terms from './pages/Terms';
 import Login from './pages/Login';
 
 function ProtectedRoute({ children, isAuthenticated }) {
@@ -62,6 +63,7 @@ function App() {
                     <Route path="storage" element={<Storage />} />
                     <Route path="settings" element={<SettingsPage />} />
                     <Route path="help" element={<Help />} />
+                    <Route path="terms-policy" element={<Terms />} />
 
                     {/* Virtual Routes for StaggeredMenu Actions */}
                     <Route path="profile" element={<div />} />

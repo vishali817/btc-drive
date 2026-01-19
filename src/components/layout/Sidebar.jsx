@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Share2, Clock, Star, Trash2, User, MessageCircle, Cloud, AlertCircle, Settings } from 'lucide-react';
+import { Home, Share2, Clock, Star, Trash2, User, MessageCircle, Cloud, AlertCircle, Settings, Scale } from 'lucide-react';
 import { driveData } from '../../data/driveData';
 import UpgradeModal from '../modals/UpgradeModal';
 import Dock from '../animations/Dock';
@@ -34,6 +34,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { id: 'spam', label: 'Spam', icon: AlertCircle, path: '/spam' },
         { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
         { id: 'help', label: 'Help', icon: MessageCircle, path: '/help' },
+        { id: 'terms', label: 'Terms & Policy', icon: Scale, path: '/terms-policy' },
     ];
 
     const isActive = (path) => location.pathname === path || (path === '/my-drive' && location.pathname.startsWith('/folder'));

@@ -397,17 +397,17 @@ const SettingsPage = () => {
                 <h1 className="text-xl font-normal text-gray-800">Settings</h1>
             </div>
 
-            <div className="flex flex-1 overflow-hidden">
-                {/* Left Sidebar */}
-                <aside className="w-64 pt-6 pb-6 overflow-y-auto">
-                    <nav className="flex flex-col">
+            <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+                {/* Left Sidebar (Desktop) / Top Nav (Mobile) */}
+                <aside className="w-full md:w-64 bg-gray-50 md:bg-white border-b md:border-b-0 border-gray-200 overflow-x-auto md:overflow-y-auto flex-shrink-0">
+                    <nav className="flex md:flex-col p-2 md:p-6 gap-2 md:gap-0">
                         {navSections.map(section => (
                             <button
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
-                                className={`flex items-center w-full px-8 py-2 text-[0.9rem] font-medium transition-colors text-left border-l-4 ${activeSection === section.id
-                                        ? 'border-primary text-blue-700 bg-blue-50'
-                                        : 'border-transparent text-gray-600 hover:bg-gray-100/80 hover:text-gray-900'
+                                className={`flex items-center whitespace-nowrap px-4 md:px-8 py-2 md:py-2 text-sm md:text-[0.9rem] font-medium transition-colors rounded-full md:rounded-none md:border-l-4 flex-shrink-0 ${activeSection === section.id
+                                    ? 'bg-primary text-white md:bg-blue-50 md:text-blue-700 md:border-primary shadow-sm md:shadow-none'
+                                    : 'text-gray-600 hover:bg-gray-100/80 hover:text-gray-900 md:border-transparent'
                                     }`}
                             >
                                 {section.label}
@@ -417,7 +417,7 @@ const SettingsPage = () => {
                 </aside>
 
                 {/* Right Content */}
-                <main className="flex-1 overflow-y-auto pt-8 pl-8 pr-16 pb-20">
+                <main className="flex-1 overflow-y-auto px-4 py-6 md:pt-8 md:pl-8 md:pr-16 md:pb-20 bg-white">
                     {renderContent()}
                 </main>
             </div>

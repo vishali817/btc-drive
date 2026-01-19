@@ -107,10 +107,11 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout, o
                     >
                         <Menu size={24} />
                     </button>
-                    <div className="bg-white rounded-full w-10 h-10 md:w-12 md:h-12 p-2 shadow-sm flex items-center justify-center">
+                    {/* Brand Logo - HIDDEN on mobile */}
+                    <div className="hidden md:flex bg-white rounded-full w-10 h-10 md:w-12 md:h-12 p-2 shadow-sm items-center justify-center">
                         <img src={btcLogo} alt="BTC Drive" className="h-6 md:h-7 w-auto" />
                     </div>
-                    <div className="flex flex-col hidden sm:flex">
+                    <div className="hidden md:flex flex-col">
                         <span className="text-lg md:text-xl font-bold tracking-tight text-white leading-none">BTC <span className="text-blue-200">Drive</span></span>
                         <span className="text-[10px] md:text-xs font-semibold text-blue-100 tracking-wider uppercase">{driveData.app.accountType}</span>
                     </div>
@@ -130,8 +131,8 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout, o
                         />
                     </div>
 
-                    {/* AI Button - Attached to Search */}
-                    <div className="hidden sm:block">
+                    {/* AI Button - Attached to Search (Visible on Mobile) */}
+                    <div className="block">
                         <button
                             onClick={() => setIsAIChatOpen(!isAIChatOpen)}
                             className={`flex items-center justify-center w-10 h-10 rounded-full font-medium shadow-lg transition-all duration-300 border-2 border-white ${isAIChatOpen ? 'bg-white text-primary scale-105' : 'bg-gradient-to-r from-[#195BAC] to-blue-400 text-white hover:shadow-blue-500/20 hover:scale-105'}`}
@@ -144,8 +145,8 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout, o
 
                 {/* Actions - Right */}
                 <div className="pointer-events-auto flex items-center gap-2 md:gap-4 flex-shrink-0">
-                    {/* Support / Help */}
-                    <div className="relative pointer-events-auto" ref={supportRef}>
+                    {/* Support / Help - HIDDEN on mobile */}
+                    <div className="relative pointer-events-auto hidden md:block" ref={supportRef}>
                         <CircularButton
                             onClick={() => handleAction('support')}
                             size="sm"
@@ -163,8 +164,8 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout, o
                         </DropdownMenu>
                     </div>
 
-                    {/* Notification Bell */}
-                    <div className="relative" ref={notificationRef}>
+                    {/* Notification Bell - HIDDEN on mobile */}
+                    <div className="relative hidden md:block" ref={notificationRef}>
                         <CircularButton
                             onClick={() => handleAction('notifications')}
                             size="sm"
@@ -187,7 +188,7 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout, o
                             onClick={() => handleAction('new-menu')}
                             className="flex items-center gap-2 px-3 md:px-6 py-2 md:py-2.5 bg-white text-primary rounded-lg md:rounded-xl font-bold shadow-lg shadow-black/10 hover:shadow-black/20 active:scale-95 transition-all duration-300 mr-0 md:mr-2"
                         >
-                            <Plus size={18} strokeWidth={3} />
+                            <Plus size={18} strokeWidth={3} className="scale-125 md:scale-100" />
                             <span className="hidden md:inline">New</span>
                         </button>
 
