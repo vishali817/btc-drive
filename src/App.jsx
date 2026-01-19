@@ -6,6 +6,9 @@ import Shared from './pages/Shared';
 import Recent from './pages/Recent';
 import Starred from './pages/Starred';
 import Trash from './pages/Trash';
+import Spam from './pages/Spam';
+import Storage from './pages/Storage';
+import SettingsPage from './pages/Settings';
 import LandingPage from './pages/LandingPage';
 import Help from './pages/Help';
 import Login from './pages/Login';
@@ -55,10 +58,12 @@ function App() {
                     <Route path="recent" element={<Recent />} />
                     <Route path="starred" element={<Starred />} />
                     <Route path="trash" element={<Trash />} />
+                    <Route path="spam" element={<Spam />} />
+                    <Route path="storage" element={<Storage />} />
+                    <Route path="settings" element={<SettingsPage />} />
                     <Route path="help" element={<Help />} />
 
                     {/* Virtual Routes for StaggeredMenu Actions */}
-                    <Route path="settings" element={<div />} />
                     <Route path="profile" element={<div />} />
                     <Route path="logout" element={<div />} />
                 </Route>

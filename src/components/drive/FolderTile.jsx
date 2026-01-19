@@ -19,11 +19,11 @@ const FolderTile = ({ folder, onClick }) => {
             </div>
             <div className="text-center w-full px-2">
                 <span className="font-bold text-[#0B1F3B] text-sm group-hover:text-blue-700 transition-colors block truncate">{folder.name}</span>
-                <span className="text-[10px] text-gray-400 block mt-0.5">{folder.meta}</span>
-                <span className="text-[9px] text-gray-400 block">
+                <span className="text-[10px] text-gray-400 block mt-0.5">
                     {folder.sharedDate ? folder.sharedDate.replace('Shared on ', '') :
                         folder.createdAt ? new Date(folder.createdAt).toLocaleDateString() : ''}
                 </span>
+                <span className="text-[9px] text-gray-400 block mt-0.5">{folder.meta}</span>
             </div>
         </motion.div>
     );

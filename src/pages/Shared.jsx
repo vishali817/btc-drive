@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Users, SearchX } from 'lucide-react';
+import { Users, SearchX, LayoutGrid, List as ListIcon } from 'lucide-react';
 import DriveGrid from '../components/drive/DriveGrid';
+import SortDropdown from '../components/drive/SortDropdown';
 import { driveData } from '../data/driveData';
 
 const Shared = () => {
@@ -10,7 +11,13 @@ const Shared = () => {
     const { searchQuery } = useOutletContext() || { searchQuery: '' };
 
     // Filter States
-    const [activeFilters, setActiveFilters] = useState({ type: 'All', date: 'Newest', owner: 'Shared' });
+    const [viewMode, setViewMode] = useState('grid');
+    const [activeFilters, setActiveFilters] = useState({ type: 'All', owner: 'Shared' });
+
+    // Sort States
+    const [sortId, setSortId] = useState('dateShared');
+    const [sortDirection, setSortDirection] = useState('desc'); // New -> Old
+    const [folderPlacement, setFolderPlacement] = useState('mixed');
 
     const handleFilterChange = (key, value) => {
         setActiveFilters(prev => ({ ...prev, [key]: value }));
@@ -22,66 +29,79 @@ const Shared = () => {
         .map((item, index) => ({
             ...item,
             sharedBy: index % 3 === 0 ? 'Alice Chen' : index % 3 === 1 ? 'Bob Smith' : 'Carol Davis',
-            sharedDate: index === 0 ? 'Shared on Jan 15, 2026 • 09:15 AM' :
-                index === 1 ? 'Shared on Jan 14, 2026 • 02:30 PM' :
-                    index === 2 ? 'Shared on Jan 12, 2026 • 11:00 AM' :
-                        'Shared on Jan 10, 2026 • 10:45 AM',
-            // Mock timestamp for sorting
-            timestamp: index === 0 ? 1768468500000 :
-                index === 1 ? 1768401000000 :
-                    index === 2 ? 1768215600000 : 1768041900000
+            sharedDate: index === 0 ? '15/01/2026 · 09:15 AM' :
+                index === 1 ? '14/01/2026 · 02:30 PM' :
+                    index === 2 ? '12/01/2026 · 11:00 AM' :
+                        '10/01/2026 · 10:45 AM',
+            // Mock timestamps
+            dateSharedMs: index === 0 ? 1768468500000 : index === 1 ? 1768401000000 : index === 2 ? 1768215600000 : 1768041900000,
+            modifiedAt: item.modifiedAt || (Date.now() - (index * 500000)),
+            lastOpened: item.lastOpened || (Date.now() - (index * 200000))
         }));
 
     // Filter Logic
-    let displayItems = allItems.filter(item => {
-        // 1. Tab Filter
-        if (activeTab === 'Folders' && item.type !== 'folder') return false;
-        if (activeTab === 'Files' && item.type === 'folder') return false;
+    const getProcessedItems = () => {
+        const filtered = allItems.filter(item => {
+            // 1. Tab Filter
+            if (activeTab === 'Folders' && item.type !== 'folder') return false;
+            if (activeTab === 'Files' && item.type === 'folder') return false;
 
-        // 2. Search Filter
-        if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+            // 2. Search Filter
+            if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
 
-        // 3. Dropdown - Type Filter
-        if (activeFilters.type !== 'All') {
-            if (activeFilters.type === 'Folder' && item.type !== 'folder') return false;
-            // Simplified file type check
-            if (activeFilters.type !== 'Folder' && item.type === 'folder') return false;
-            if (activeFilters.type !== 'Folder') {
-                const fType = item.fileType ? item.fileType.toLowerCase() : '';
-                const filterVal = activeFilters.type.toLowerCase();
-                if (filterVal === 'document' && !['docx', 'doc', 'txt', 'pdf', 'document'].includes(fType)) return false;
-                if (filterVal === 'image' && !['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp', 'image'].includes(fType)) return false;
-                if (filterVal === 'video' && !['mp4', 'mov', 'avi', 'webm', 'video'].includes(fType)) return false;
-                if (filterVal === 'pdf' && fType !== 'pdf') return false;
+            // 3. Dropdown - Type Filter
+            if (activeFilters.type !== 'All') {
+                if (activeFilters.type === 'Folder' && item.type !== 'folder') return false;
+                if (activeFilters.type !== 'Folder' && item.type === 'folder') return false;
+                if (activeFilters.type !== 'Folder') {
+                    const fType = item.fileType ? item.fileType.toLowerCase() : '';
+                    const filterVal = activeFilters.type.toLowerCase();
+                    if (filterVal === 'document' && !['docx', 'doc', 'txt', 'pdf', 'document'].includes(fType)) return false;
+                    if (filterVal === 'image' && !['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp', 'image'].includes(fType)) return false;
+                    // ... other types
+                }
             }
-        }
+            if (activeFilters.owner === 'Me') return false;
+            return true;
+        });
 
-        // 4. Dropdown - Owner Filter (In context of Shared, 'Me' vs 'Shared')
-        // All items here are shared. So 'Me' should result in none?
-        // Or if we mix items? Assuming 'Shared' page only has shared items.
-        // If filter is 'Me', show empty or owned items (if any).
-        // Since all items here have sharedBy, 'Me' -> false?
-        // Let's assume 'Me' filters items I shared? (Not in mock data).
-        // For now, if activeFilters.owner === 'Me', we show nothing or alert?
-        // Let's show nothing to be correct logically.
-        if (activeFilters.owner === 'Me') return false;
-        if (activeFilters.owner === 'Shared') return true; // Show all (as they are all shared)
+        const sortFn = (a, b) => {
+            let comparison = 0;
+            switch (sortId) {
+                case 'name':
+                    comparison = a.name.localeCompare(b.name);
+                    break;
+                case 'dateShared':
+                    comparison = (a.dateSharedMs || 0) - (b.dateSharedMs || 0);
+                    break;
+                case 'dateModified':
+                    comparison = (a.modifiedAt || 0) - (b.modifiedAt || 0);
+                    break;
+                case 'dateOpenedByMe':
+                    comparison = (a.lastOpened || 0) - (b.lastOpened || 0);
+                    break;
+                case 'dateModifiedByMe':
+                    comparison = (a.modifiedAt || 0) - (b.modifiedAt || 0);
+                    break;
+                default:
+                    comparison = 0;
+            }
+            return sortDirection === 'asc' ? comparison : -comparison;
+        };
 
-        return true;
-    }).sort((a, b) => {
-        // 5. Date Sort
-        if (activeFilters.date === 'Newest' || activeFilters.date === 'Recent') {
-            return b.timestamp - a.timestamp;
+        if (folderPlacement === 'top') {
+            // Separate Folders and Files, Sort each, then Merge
+            const folders = filtered.filter(i => i.type === 'folder').sort(sortFn);
+            const files = filtered.filter(i => i.type !== 'folder').sort(sortFn);
+            return [...folders, ...files];
+        } else {
+            return filtered.sort(sortFn);
         }
-        if (activeFilters.date === 'Older') {
-            return a.timestamp - b.timestamp;
-        }
-        return 0;
-    });
+    };
+
+    const displayItems = getProcessedItems();
 
     const isGrouped = activeTab === 'People' && activeFilters.owner !== 'Me';
-
-    // Grouping for People View
     const groupedItems = isGrouped ? displayItems.reduce((acc, item) => {
         const user = item.sharedBy;
         if (!acc[user]) acc[user] = [];
@@ -91,24 +111,24 @@ const Shared = () => {
 
     return (
         <div className="animate-fade-in pb-20 px-8">
-            <header className="mb-8 bg-white/50 backdrop-blur-sm p-6 rounded-3xl border border-white/40 shadow-sm">
+            <header className="mb-2 bg-white/50 backdrop-blur-sm p-6 rounded-3xl border border-white/40 shadow-sm relative z-30">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-3">
                         <div className="p-3 bg-purple-100 rounded-2xl text-purple-600 shadow-inner">
                             <Users size={28} />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-[#0B1F3B]">Shared with me</h1>
+                            <h1 className="text-3xl font-bold text-primary">Shared with me</h1>
                             <p className="text-gray-500 font-medium">Files shared by your team</p>
                         </div>
                     </div>
 
-                    {/* Filter Dropdowns */}
+                    {/* Filter Dropdowns & View Toggle */}
                     <div className="flex items-center gap-2 flex-wrap">
                         <select
                             value={activeFilters.type}
                             onChange={(e) => handleFilterChange('type', e.target.value)}
-                            className="bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-[#0B1F3B] focus:ring-2 focus:ring-[#0B1F3B]/20 shadow-sm transition-all hover:border-gray-300"
+                            className="bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all hover:border-gray-300"
                         >
                             <option value="All">Type: All</option>
                             <option value="Folder">Folder</option>
@@ -118,22 +138,40 @@ const Shared = () => {
                             <option value="Video">Video</option>
                         </select>
                         <select
-                            value={activeFilters.date}
-                            onChange={(e) => handleFilterChange('date', e.target.value)}
-                            className="bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-[#0B1F3B] focus:ring-2 focus:ring-[#0B1F3B]/20 shadow-sm transition-all hover:border-gray-300"
-                        >
-                            <option value="Recent">Date: Recent</option>
-                            <option value="Newest">Newest First</option>
-                            <option value="Older">Oldest First</option>
-                        </select>
-                        <select
                             value={activeFilters.owner}
                             onChange={(e) => handleFilterChange('owner', e.target.value)}
-                            className="bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-[#0B1F3B] focus:ring-2 focus:ring-[#0B1F3B]/20 shadow-sm transition-all hover:border-gray-300"
+                            className="bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all hover:border-gray-300"
                         >
                             <option value="Shared">Shared with me</option>
                             <option value="Me">Owned by me</option>
                         </select>
+
+                        <div className="ml-2">
+                            <SortDropdown
+                                type="shared"
+                                activeSort={sortId}
+                                sortDirection={sortDirection}
+                                onSortChange={setSortId}
+                                onDirectionChange={setSortDirection}
+                                placement={folderPlacement}
+                                onPlacementChange={setFolderPlacement}
+                            />
+                        </div>
+
+                        <div className="flex bg-white/50 p-1 rounded-xl shadow-sm border border-gray-200 ml-2">
+                            <button
+                                onClick={() => setViewMode('list')}
+                                className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'list' ? 'bg-white shadow text-primary' : 'text-gray-400 hover:text-gray-600'}`}
+                            >
+                                <ListIcon size={20} />
+                            </button>
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'grid' ? 'bg-white shadow text-primary' : 'text-gray-400 hover:text-gray-600'}`}
+                            >
+                                <LayoutGrid size={20} />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -143,14 +181,19 @@ const Shared = () => {
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-6 py-3 font-bold text-sm transition-all relative rounded-t-lg ${activeTab === tab ? 'text-[#0B1F3B] bg-white/60' : 'text-gray-400 hover:text-gray-600 hover:bg-white/30'}`}
+                            className={`px-6 py-3 font-bold text-sm transition-all relative rounded-t-lg ${activeTab === tab ? 'text-primary bg-white/60' : 'text-gray-400 hover:text-gray-600 hover:bg-white/30'}`}
                         >
                             {tab}
-                            {activeTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#0B1F3B] rounded-t-full" />}
+                            {activeTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full" />}
                         </button>
                     ))}
                 </div>
             </header>
+
+            {/* Date & Time Header */}
+            <div className="mb-6 flex items-center gap-2 text-sm text-gray-500 font-medium border-b border-gray-100 pb-2">
+                <span>Last modified: 18 Jan 2026 · 12:10 PM</span>
+            </div>
 
             {isGrouped ? (
                 // People View (Grouped)
@@ -165,7 +208,7 @@ const Shared = () => {
                                     <h3 className="font-bold text-[#0B1F3B] text-lg">{user}</h3>
                                     <span className="text-sm font-medium text-gray-500 bg-white/50 px-3 py-1 rounded-full">{items.length} items</span>
                                 </div>
-                                <DriveGrid items={items} viewMode="grid" searchQuery={searchQuery} />
+                                <DriveGrid items={items} viewMode={viewMode} searchQuery={searchQuery} />
                             </div>
                         ))}
                     </div>
@@ -180,7 +223,7 @@ const Shared = () => {
             ) : (
                 // Standard Grid Filters
                 displayItems.length > 0 ? (
-                    <DriveGrid items={displayItems} viewMode="grid" searchQuery={searchQuery} />
+                    <DriveGrid items={displayItems} viewMode={viewMode} searchQuery={searchQuery} />
                 ) : (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">

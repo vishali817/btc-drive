@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Share2, Clock, Star, Trash2, User, MessageCircle, Cloud } from 'lucide-react';
+import { Home, Share2, Clock, Star, Trash2, User, MessageCircle, Cloud, AlertCircle, Settings } from 'lucide-react';
 import { driveData } from '../../data/driveData';
 import UpgradeModal from '../modals/UpgradeModal';
 import Dock from '../animations/Dock';
@@ -31,6 +31,8 @@ const Sidebar = () => {
         { id: 'recent', label: 'Recent', icon: Clock, path: '/recent' },
         { id: 'starred', label: 'Starred', icon: Star, path: '/starred' },
         { id: 'trash', label: 'Trash', icon: Trash2, path: '/trash' },
+        { id: 'spam', label: 'Spam', icon: AlertCircle, path: '/spam' },
+        { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
         { id: 'help', label: 'Help', icon: MessageCircle, path: '/help' },
     ];
 
@@ -39,7 +41,8 @@ const Sidebar = () => {
     return (
         <>
             {/* Desktop Vertical Sidebar */}
-            <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[260px] flex-col pt-24 pb-8 z-40 bg-[#0B1F3A] text-white overflow-y-auto border-r border-white/10 shadow-xl">
+            {/* Desktop Vertical Sidebar */}
+            <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[260px] flex-col pt-24 pb-8 z-40 bg-[#0D2B45] text-white overflow-y-auto border-r border-white/10 shadow-xl transition-colors duration-300">
                 <div className="flex flex-col gap-2 px-4">
                     {navItems.map((item) => {
                         const active = isActive(item.path);
@@ -47,10 +50,10 @@ const Sidebar = () => {
                             <button
                                 key={item.id}
                                 onClick={() => navigate(item.path)}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-sm font-medium
+                                className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group text-sm font-medium
                                     ${active
-                                        ? 'bg-white/20 text-white shadow-lg shadow-black/5 font-bold'
-                                        : 'hover:bg-white/10 text-blue-50'
+                                        ? 'bg-[#195BAC] text-white shadow-lg shadow-black/5 font-bold'
+                                        : 'hover:bg-[#195BAC] text-blue-50'
                                     }
                                 `}
                             >
@@ -65,12 +68,26 @@ const Sidebar = () => {
                 </div>
 
                 <div className="mt-auto px-6 py-4 space-y-4">
+                    {/* Storage Section */}
+                    <div className="group cursor-pointer" onClick={() => navigate('/storage')}>
+                        <div className="flex items-center gap-2 mb-2 text-blue-100 group-hover:text-white transition-colors">
+                            <Cloud size={20} />
+                            <span className="text-sm font-medium">Storage</span>
+                        </div>
+                        <div className="w-full h-1 bg-blue-900/30 rounded-full overflow-hidden mb-1">
+                            <div className="h-full w-[30%] bg-white/90 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+                        </div>
+                        <div className="text-[11px] text-blue-200 group-hover:text-blue-100 transition-colors">
+                            4.5 GB of 15 GB used
+                        </div>
+                    </div>
+
                     {/* Offline Mode Toggle */}
-                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
                         <span className="text-xs font-medium text-blue-100">Offline Mode</span>
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" className="sr-only peer" />
-                            <div className="w-9 h-5 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#195BAC]/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#195BAC]"></div>
+                            <div className="w-9 h-5 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-white/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-400"></div>
                         </label>
                     </div>
 

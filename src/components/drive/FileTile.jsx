@@ -37,11 +37,11 @@ const FileTile = ({ file }) => {
             <div className="text-center w-full px-2">
                 <h3 className="font-bold text-[#0B1F3B] text-sm group-hover:text-blue-700 transition-colors truncate w-full block">{file.name}</h3>
                 <div className="flex flex-col gap-0.5 mt-1">
-                    <span className="text-[10px] text-gray-500 font-medium">{file.size}</span>
-                    <span className="text-[9px] text-gray-400">
+                    <span className="text-[10px] text-gray-400">
                         {file.sharedDate ? file.sharedDate.replace('Shared on ', '') :
                             file.createdAt ? new Date(file.createdAt).toLocaleDateString() : 'Jan 16, 2026'}
                     </span>
+                    <span className="text-[10px] text-gray-500 font-medium">{file.size}</span>
                 </div>
             </div>
         </motion.div>

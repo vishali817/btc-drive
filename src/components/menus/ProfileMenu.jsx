@@ -30,13 +30,6 @@ const ProfileMenu = ({ onAction }) => {
                     <CreditCard size={16} className="text-gray-500" />
                     Billing & Plans
                 </button>
-                <button
-                    onClick={() => onAction('settings')}
-                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-left"
-                >
-                    <Settings size={16} className="text-gray-500" />
-                    Account Settings
-                </button>
             </div>
 
             <div className="border-t border-gray-100 mt-2 pt-2 px-2">

@@ -41,12 +41,12 @@ const LandingPage = () => {
                             className="h-7 w-auto"
                         />
                     </div>
-                    <span className="text-xl font-bold text-[#0B1F3A]">BTC Drive</span>
+                    <span className="text-xl font-bold text-[#195BAC]">BTC Drive</span>
                 </div>
 
                 <button
                     onClick={handleLoginClick}
-                    className="px-8 py-3 bg-[#0B1F3A] text-white rounded-full font-bold hover:bg-[#144a8f] transition-all transform hover:scale-105 shadow-xl shadow-blue-200"
+                    className="px-8 py-3 bg-[#195BAC] text-white rounded-full font-bold hover:bg-[#154a8f] transition-all transform hover:scale-105 shadow-xl shadow-blue-200"
                 >
                     Login
                 </button>
@@ -57,7 +57,7 @@ const LandingPage = () => {
                 {/* Background Blobs (Decoration) - REMOVED for cleaner professional look (User Req 2) */}
 
                 <div className="mb-6 relative z-10">
-                    <span className="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-[#0B1F3A] font-bold text-xs tracking-wider uppercase mb-8 shadow-sm">
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-[#195BAC] font-bold text-xs tracking-wider uppercase mb-8 shadow-sm">
                         Future of Cloud Storage
                     </span>
                     <TextType
@@ -66,7 +66,7 @@ const LandingPage = () => {
                         pauseDuration={2000}
                         showCursor={true}
                         cursorCharacter="_"
-                        className="text-4xl md:text-6xl font-black text-[#0B1F3A] tracking-tight drop-shadow-sm"
+                        className="text-4xl md:text-6xl font-black text-[#195BAC] tracking-tight drop-shadow-sm"
                     />
                 </div>
 
@@ -76,7 +76,7 @@ const LandingPage = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 mb-24 relative z-10">
-                    <button onClick={handleLoginClick} className="px-8 py-4 bg-[#0B1F3A] text-white rounded-2xl font-bold text-lg hover:bg-[#144a8f] transition-all transform hover:translate-y-[-4px] shadow-xl shadow-blue-300">
+                    <button onClick={handleLoginClick} className="px-8 py-4 bg-[#195BAC] text-white rounded-2xl font-bold text-lg hover:bg-[#154a8f] transition-all transform hover:translate-y-[-4px] shadow-xl shadow-blue-300">
                         Get Started Free
                     </button>
                     <button
@@ -86,7 +86,7 @@ const LandingPage = () => {
                                 section.scrollIntoView({ behavior: 'smooth' });
                             }
                         }}
-                        className="px-8 py-4 bg-white text-[#0B1F3B] border-2 border-[#0B1F3B]/10 rounded-2xl font-bold text-lg hover:bg-blue-50 transition-all transform hover:translate-y-[-4px]"
+                        className="px-8 py-4 bg-white text-[#195BAC] border-2 border-[#195BAC]/10 rounded-2xl font-bold text-lg hover:bg-blue-50 transition-all transform hover:translate-y-[-4px]"
                     >
                         View Features
                     </button>
@@ -97,7 +97,7 @@ const LandingPage = () => {
                     <div className="mb-20">
                         <ScrollFloat
                             containerClassName="flex justify-center"
-                            textClassName="text-[#0B1F3B] font-black text-4xl md:text-5xl opacity-90"
+                            textClassName="text-[#195BAC] font-black text-4xl md:text-5xl opacity-90"
                         >
                             Why Choose BTC Drive
                         </ScrollFloat>
@@ -105,9 +105,9 @@ const LandingPage = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
                         {features.map((f, i) => (
-                            <GlareHover key={i} width="100%" height="320px" borderRadius="32px" background="rgba(255,255,255,0.8)" glareColor="#0B1F3B" className="shadow-2xl shadow-blue-100/50 backdrop-blur-sm border border-white/60">
+                            <GlareHover key={i} width="100%" height="320px" borderRadius="32px" background="rgba(255,255,255,0.8)" glareColor="#195BAC" className="shadow-2xl shadow-blue-100/50 backdrop-blur-sm border border-white/60">
                                 <div className="flex flex-col items-center justify-center p-8 text-center h-full w-full group">
-                                    <div className="w-20 h-20 bg-gradient-to-tr from-[#0B1F3B] to-blue-400 rounded-3xl rotate-3 group-hover:rotate-6 transition-transform duration-500 flex items-center justify-center mb-8 shadow-xl shadow-blue-200">
+                                    <div className="w-20 h-20 bg-gradient-to-tr from-[#195BAC] to-blue-400 rounded-3xl rotate-3 group-hover:rotate-6 transition-transform duration-500 flex items-center justify-center mb-8 shadow-xl shadow-blue-200">
                                         {f.icon}
                                     </div>
                                     <h3 className="text-2xl font-bold text-gray-800 mb-3">{f.title}</h3>

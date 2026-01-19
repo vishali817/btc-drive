@@ -39,10 +39,6 @@ const Layout = ({ onLogout }) => {
             if (onLogout) onLogout();
             navigate('/');
         }
-        if (location.pathname === '/settings') {
-            setIsSettingsOpen(true);
-            navigate('/my-drive', { replace: true });
-        }
         if (location.pathname === '/profile') {
             setIsSettingsOpen(true);
             navigate('/my-drive', { replace: true });
@@ -128,7 +124,9 @@ const Layout = ({ onLogout }) => {
             />
             <Sidebar />
 
-            <main className="flex-1 h-full overflow-y-auto w-full md:pl-[280px] pt-24 pb-32 relative z-10 scroll-smooth">
+            {/* Conditional padding for sidebar gap */}
+            <main className={`flex-1 h-full overflow-y-auto w-full pt-24 pb-32 relative z-10 scroll-smooth ${['/settings', '/help'].includes(location.pathname) ? 'md:pl-[280px]' : 'md:pl-[265px]'
+                }`}>
                 {/* Pass search query to children pages */}
                 <Outlet context={{ searchQuery, fileSystem }} />
             </main>

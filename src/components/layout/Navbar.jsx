@@ -93,12 +93,10 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
 
     return (
         <>
-            <nav className="fixed top-0 left-0 w-full px-8 py-4 z-50 flex items-center justify-between pointer-events-none bg-[#0B1F3B] border-b border-white/10 shadow-lg">
-                {/* Gradient Overlay for Header readability - Removed since solid bg */}
-
+            <nav className="fixed top-0 left-0 w-full px-8 py-4 z-50 flex items-center justify-between pointer-events-none bg-[#195bac] border-b border-white/10 shadow-lg">
                 {/* Brand - Left */}
                 <div className="pointer-events-auto flex items-center gap-3 w-[260px]">
-                    <div className="bg-white rounded-2xl p-2 shadow-sm flex items-center justify-center">
+                    <div className="bg-white rounded-full p-2 shadow-sm flex items-center justify-center">
                         <img src={btcLogo} alt="BTC Drive" className="h-5 w-auto" />
                     </div>
                     <div className="flex flex-col">
@@ -126,24 +124,15 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                 <div className="pointer-events-auto mr-4 hidden md:block">
                     <button
                         onClick={() => setIsAIChatOpen(!isAIChatOpen)}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium shadow-lg transition-all text-sm ${isAIChatOpen ? 'bg-white text-[#0B1F3B] scale-105' : 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:shadow-purple-500/20 hover:scale-105'}`}
+                        className={`flex items-center justify-center w-10 h-10 rounded-full font-medium shadow-lg transition-all duration-300 ${isAIChatOpen ? 'bg-white text-primary scale-105' : 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:shadow-purple-500/20 hover:scale-105'}`}
                     >
-                        <Sparkles size={16} />
-                        <span>AI Assist</span>
+                        <Sparkles size={18} />
                     </button>
                     <AIChatWidget isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
                 </div>
 
                 {/* Actions - Right */}
                 <div className="pointer-events-auto flex items-center gap-4">
-                    <button
-                        onClick={() => setIsUpgradeOpen(true)}
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-white/10 text-white rounded-xl font-medium transition-all"
-                    >
-                        <Cloud size={20} className="text-blue-200" />
-                        <span>Storage</span>
-                    </button>
-
                     {/* Notification Bell */}
                     <div className="relative" ref={notificationRef}>
                         <CircularButton
@@ -166,7 +155,7 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                     <div className="relative" ref={newMenuRef}>
                         <button
                             onClick={() => handleAction('new-menu')}
-                            className="flex items-center gap-2 px-6 py-2.5 bg-white text-[#0B1F3A] rounded-xl font-bold shadow-lg shadow-black/10 hover:shadow-black/20 active:scale-95 transition-all duration-300 mr-2"
+                            className="flex items-center gap-2 px-6 py-2.5 bg-white text-primary rounded-xl font-bold shadow-lg shadow-black/10 hover:shadow-black/20 active:scale-95 transition-all duration-300 mr-2"
                         >
                             <Plus size={18} strokeWidth={3} />
                             New
@@ -204,19 +193,23 @@ const Navbar = ({ setSearchQuery, isSettingsOpen, setIsSettingsOpen, onLogout })
                         </DropdownMenu>
                     </div>
 
-                    <StaggeredMenu
-                        items={[
-                            { label: 'Profile', onClick: () => handleProfileAction('profile'), ariaLabel: 'View Profile' },
-                            { label: 'Settings', onClick: () => handleProfileAction('settings'), ariaLabel: 'Open Settings' },
-                            { label: 'Logout', onClick: () => handleProfileAction('logout'), ariaLabel: 'Logout' }
-                        ]}
-                        displaySocials={false}
-                        position="right"
-                        isFixed={false}
-                        menuButtonColor="#ffffff"
-                        openMenuButtonColor="#ffffff"
-                        logoUrl="https://upload.wikimedia.org/wikipedia/commons/1/1e/RPC-JP_Logo.png" // Placeholder
-                    />
+                    {/* Profile Avatar & Menu */}
+                    <div className="relative" ref={profileRef}>
+                        <button
+                            onClick={() => handleAction('profile')}
+                            className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center font-bold shadow-lg ring-2 ring-white/20 hover:ring-white/40 transition-all text-sm"
+                        >
+                            JS
+                        </button>
+                        <DropdownMenu
+                            isOpen={activeMenu === 'profile'}
+                            onClose={() => setActiveMenu(null)}
+                            triggerRef={profileRef}
+                            width="w-64"
+                        >
+                            <ProfileMenu onAction={handleProfileAction} />
+                        </DropdownMenu>
+                    </div>
                 </div>
             </nav>
 

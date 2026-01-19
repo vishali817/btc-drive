@@ -1,9 +1,15 @@
 import { useState } from 'react';
-import { Star, LayoutGrid, List as ListIcon } from 'lucide-react';
+import { AlertCircle, SearchX, LayoutGrid, List as ListIcon } from 'lucide-react';
+import { useOutletContext } from 'react-router-dom';
+import DriveGrid from '../components/drive/DriveGrid';
 
-const Starred = () => {
+const Spam = () => {
+    const { searchQuery } = useOutletContext() || { searchQuery: '' };
     const [viewMode, setViewMode] = useState('list');
     const [activeFilters, setActiveFilters] = useState({ type: 'All', date: 'Recent', owner: 'All' });
+
+    // Mock Spam Items (Empty by default as per requirement)
+    const [spamItems, setSpamItems] = useState([]);
 
     const handleFilterChange = (key, value) => {
         setActiveFilters(prev => ({ ...prev, [key]: value }));
@@ -13,7 +19,12 @@ const Starred = () => {
         <div className="animate-fade-in pb-20 px-8">
             <header className="mb-4">
                 <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-3xl font-bold text-gray-900">Starred</h1>
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-red-100 rounded-lg text-red-600">
+                            <AlertCircle size={24} />
+                        </div>
+                        <h1 className="text-3xl font-bold text-gray-900">Spam</h1>
+                    </div>
 
                     {/* View Controls */}
                     <div className="flex items-center gap-2">
@@ -66,7 +77,10 @@ const Starred = () => {
                     </div>
                 </div>
 
-                <p className="text-gray-500 mt-1 mb-4">Your most important files, one click away.</p>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-6 text-sm text-gray-600 flex items-center gap-2">
+                    <AlertCircle size={16} />
+                    <span>Items in spam will be permanently deleted after 30 days.</span>
+                </div>
 
                 {/* Date & Time Header */}
                 <div className="flex items-center gap-2 text-sm text-gray-500 font-medium border-b border-gray-100 pb-2">
@@ -74,16 +88,21 @@ const Starred = () => {
                 </div>
             </header>
 
-            <div className="flex flex-col items-center justify-center py-32">
-                <div className="relative">
-                    <div className="absolute inset-0 bg-yellow-400 blur-2xl opacity-20 rounded-full" />
-                    <Star size={80} className="text-gray-200 relative z-10" strokeWidth={1} />
+            {spamItems.length > 0 ? (
+                <DriveGrid items={spamItems} viewMode={viewMode} searchQuery={searchQuery} />
+            ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 border border-white shadow-inner">
+                        <AlertCircle size={40} className="text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-700">No items in spam</h3>
+                    <p className="text-gray-500 max-w-xs mx-auto mt-2">
+                        Your spam folder is empty.
+                    </p>
                 </div>
-                <h2 className="text-xl font-semibold text-gray-700 mt-6 mb-2">No starred files</h2>
-                <p className="text-gray-400">Add chips to items to see them here.</p>
-            </div>
+            )}
         </div>
     );
 };
 
-export default Starred;
+export default Spam;
